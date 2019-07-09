@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"strings"	
 	"time"	
+	"bufio"	
 	"regexp"	
 	"errors"
 	"github.com/astaxie/beego/logs"
@@ -60,9 +61,7 @@ func ReadConfig() Config{
 	return localConfig
 }
 
-func UpdateJsonFile(currentFile string, newFile string){
-	logs.Notice(currentFile)
-	logs.Notice(newFile)
+func UpdateJsonFile(newFile string, currentFile string){
 	local, err := os.Open(currentFile)
 	if err != nil {
 		logs.Error(err)
@@ -196,15 +195,65 @@ func CopyBinary(service string)(err error){
 	return err
 }
 
+func UpdateTxtFile(src string, dst string)(err error){
+	local, err := os.Open(src)
+	if err != nil {logs.Error(err); return err}
+	
+	remote, err := os.Open(dst)
+	if err != nil {logs.Error("Error opennign file for read UpdateTxtFile: "+err.Error()); return err}
+	remoteWR, err := os.OpenFile(dst, os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {logs.Error("Error opennign file for append UpdateTxtFile: "+err.Error()); return err}
+
+	defer local.Close()
+	defer remote.Close()
+	defer remoteWR.Close()
+
+	scannerSRC := bufio.NewScanner(local)
+	scannerDST := bufio.NewScanner(remote)
+	
+	var totalLine []string
+	dstLine :=make(map[string]string)
+
+	for scannerDST.Scan() {
+		dLine := strings.Split(scannerDST.Text(), " ")
+		logs.Info(dLine[0])
+		dstLine[dLine[0]] = scannerDST.Text()
+	}
+
+	for scannerSRC.Scan() {
+		srcLine := strings.Split(scannerSRC.Text(), " ")
+		logs.Notice(srcLine[0])
+		if _, ok := dstLine[srcLine[0]]; !ok {
+			totalLine = append(totalLine, scannerSRC.Text())
+		}
+	}
+	
+	for x := range totalLine {
+		logs.Warn(totalLine[x])
+		if _, err = remoteWR.WriteString("\n"+totalLine[x]); err != nil {
+			logs.Error("Error writting to dst file: "+err.Error())
+			return err
+		}
+	}
+
+	return err
+}
+
 func UpdateFiles(service string)(err error){
 	switch service{
 	case "owlhmaster":
 		for w := range config.Masterfiles{
-			if _, err := os.Stat(config.Masterconfpath+config.Masterdb[w]); os.IsNotExist(err) {				
+			if _, err := os.Stat(config.Masterconfpath+config.Masterfiles[w]); os.IsNotExist(err) {				
 				err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])	
 				if err != nil {	logs.Error("UpdateFiles Error copy files for master: "+err.Error()); return err}
 			}else{
-				UpdateJsonFile(config.Masterconfpath+config.Masterfiles[w], config.Tmpfolder+service+"/conf/"+config.Masterfiles[w])
+				if config.Masterfiles[w] == "app.conf"{
+					logs.Debug("app.conf owlhmaster")
+					err = UpdateTxtFile(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])
+					if err != nil {	logs.Error("UpdateTxtFile Error copy files for master: "+err.Error()); return err}
+				}else{
+					UpdateJsonFile(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])
+				}
 			}
 		}
 		err = CopyFiles(config.Tmpfolder+"current.version", config.Masterconfpath+"current.version")
@@ -212,11 +261,17 @@ func UpdateFiles(service string)(err error){
 
 	case "owlhnode":
 		for w := range config.Nodefiles{
-			if _, err := os.Stat(config.Masterconfpath+config.Masterdb[w]); os.IsNotExist(err) {				
+			if _, err := os.Stat(config.Nodeconfpath+config.Nodefiles[w]); os.IsNotExist(err) {				
 				err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])	
-				if err != nil {	logs.Error("UpdateFiles Error copy files for master: "+err.Error()); return err}
+				if err != nil {	logs.Error("UpdateFiles Error copy files for Node: "+err.Error()); return err}
 			}else{
-				UpdateJsonFile(config.Nodeconfpath+config.Nodefiles[w], config.Tmpfolder+service+"/conf/"+config.Nodefiles[w])
+
+				if config.Nodefiles[w] == "app.conf"{
+					err = UpdateTxtFile(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])
+					if err != nil {	logs.Error("UpdateTxtFile Error copy files for Node: "+err.Error()); return err}
+				}else{
+					UpdateJsonFile(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])
+				}
 			}
 		}
 		err = CopyFiles(config.Tmpfolder+"current.version", config.Nodeconfpath+"current.version")
@@ -387,8 +442,8 @@ func ManageMaster(){
 		if err != nil {	logs.Error("CopyServiceFiles Error INSTALL Master: "+err.Error()); sessionLog["status"] = "Error copying service files for Master: "+err.Error(); Logger(sessionLog); isError=true}
 		
 		logs.Info("ManageMaster Copying current.version...")
-		err = CopyFiles(config.Tmpfolder+"current.version", config.Uiconfpath+"current.version")
-		if err != nil {	logs.Error("ManageMaster BackupUiConf Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for Master: "+err.Error(); Logger(sessionLog); isError=true}
+		err = CopyFiles(config.Tmpfolder+"current.version", config.Masterconfpath+"current.version")
+		if err != nil {	logs.Error("ManageMaster back up Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for Master: "+err.Error(); Logger(sessionLog); isError=true}
 		
 		logs.Info("ManageMaster Launching service...")
 		err = StartService(service)
@@ -455,7 +510,7 @@ func ManageNode(){
 		if err != nil {	logs.Error("ManageNode Error UPDATING StopService: "+err.Error()); sessionLog["status"] = "Error Stopping service for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Copying files from download")
 		err = FullCopyDir(config.Tmpfolder+service, config.Nodebinpath)
-		if err != nil {	logs.Error("FullCopyDir Error INSTALL Master: "+err.Error()); sessionLog["status"] = "Error copying the full directory for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("FullCopyDir Error INSTALL Node: "+err.Error()); sessionLog["status"] = "Error copying the full directory for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Launching service...")
 		err = CopyFiles(config.Tmpfolder+"current.version", config.Uiconfpath+"current.version")
 		if err != nil {	logs.Error("ManageNode BackupUiConf Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error Copying files for Node: "+err.Error(); Logger(sessionLog); isError=true}
@@ -517,7 +572,7 @@ func ManageUI(){
 		if err != nil {	logs.Error("ManageUI Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageUI Copying files from download")
 		err = FullCopyDir(config.Tmpfolder+service, config.Uipath)
-		if err != nil {	logs.Error("ManageUI FullCopyDir Error INSTALL Master: "+err.Error()); sessionLog["status"] = "Error copying full directory for UI: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("ManageUI FullCopyDir Error INSTALL Node: "+err.Error()); sessionLog["status"] = "Error copying full directory for UI: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageUI Launching service...")
 		err = CopyFiles(config.Tmpfolder+"current.version", config.Uiconfpath+"current.version")
 		if err != nil {	logs.Error("ManageUI BackupUiConf Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for UI: "+err.Error(); Logger(sessionLog); isError=true}
