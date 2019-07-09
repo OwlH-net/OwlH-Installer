@@ -18,11 +18,13 @@
         "ui"
     ],
     "masterfiles":[
-        "main.conf"
+        "main.conf",
+        "app.conf"
     ],
     "nodefiles":[
         "main.conf",
-        "stap-defaults.json"
+        "stap-defaults.json",
+        "app.conf"
     ],
     "uifiles":[
         "ui.conf"
