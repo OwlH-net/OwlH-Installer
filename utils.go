@@ -133,6 +133,9 @@ func DownloadFile(filepath string, url string)(err error){
 
 func GetVersion(path string)(version string, err error){
 	//check if exist
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return "",err
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		logs.Error("Error GetVersion OPEN: "+err.Error())
@@ -152,7 +155,7 @@ func CheckVersion(confpath string) (status bool, err error){
 	if err != nil {	logs.Error("CheckVersion Error checking newVersion: "+err.Error()); return true,err}
 
 	localVersion,err := GetVersion(confpath+config.Versionfile)
-	if err != nil {	logs.Error("CheckVersion Error checking localVersion: "+err.Error()); return true,err}
+	if err != nil {	logs.Info("CheckVersion current.version doesn't exists: "+err.Error()); return true,err}
 
 	newVersion = strings.TrimSuffix(newVersion, "\n")
 	localVersion = strings.TrimSuffix(localVersion, "\n")
@@ -186,10 +189,10 @@ func RemoveDownloadedFiles(service string)(err error){
 			err = os.RemoveAll(config.Tmpfolder+config.Mastertarfile)
 			if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing downloaded file for "+service+": "+err.Error()); return err }
 		case "owlhnode":
-			err = os.RemoveAll(config.Tmpfolder+config.Mastertarfile)
+			err = os.RemoveAll(config.Tmpfolder+config.Nodetarfile)
 			if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing downloaded file for "+service+": "+err.Error()); return err }
 		case "owlhui":
-			err = os.RemoveAll(config.Tmpfolder+config.Mastertarfile)
+			err = os.RemoveAll(config.Tmpfolder+config.Uitarfile)
 			if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing downloaded file for "+service+": "+err.Error()); return err }
 		default:
 			logs.Info("UNKNOWN Service for RemoveDownloadedFiles")
