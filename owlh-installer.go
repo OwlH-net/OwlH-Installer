@@ -669,27 +669,6 @@ func main() {
 			Logger(sessionLog)
 		}
 	}
-
-	// sessionLog["status"] = "Removing /tmp data"
-	// Logger(sessionLog)
-	// for w := range config.Target {
-
-	// 	switch config.Target[w] {
-	// 	case "master":
-	// 		err = RemoveDownloadedFiles("owlhmaster")
-	// 		if err != nil {	logs.Error("ManageMaster Error INSTALL RemoveDownloadedFiles: "+err.Error()); sessionLog["status"] = "Error removing /tmp files for Master: "+err.Error(); Logger(sessionLog)}
-	// 	case "node":
-	// 		err = RemoveDownloadedFiles("owlhnode")
-	// 		if err != nil {	logs.Error("ManageNode Error INSTALL RemoveDownloadedFiles: "+err.Error()); sessionLog["status"] = "Error removing /tmp files for Node: "+err.Error(); Logger(sessionLog)}
-	// 	case "ui":
-	// 		err = RemoveDownloadedFiles("owlhui")
-	// 		if err != nil {	logs.Error("ManageUi Error INSTALL RemoveDownloadedFiles: "+err.Error()); sessionLog["status"] = "Error removing /tmp files for UI: "+err.Error(); Logger(sessionLog)}
-	// 	default:
-	// 		logs.Info("UNKNOWN Target at Main()")
-	// 		sessionLog["status"] = "UNKNOWN Target at Main()"
-	// 		Logger(sessionLog)
-	// 	}
-	// }
 	
 	currentTime = time.Now().Format("2006-01-02 15:04:05")
 	sessionLog = make(map[string]string)
