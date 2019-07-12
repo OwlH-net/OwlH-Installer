@@ -227,12 +227,8 @@ func UpdateTxtFile(src string, dst string)(err error){
 
 	for scannerSRC.Scan() {
 		srcLine := strings.Split(scannerSRC.Text(), " ")
-		logs.Notice(srcLine[0])
-		logs.Warn(dstLine[srcLine[0]])
 		if _, ok := dstLine[srcLine[0]]; !ok {
 			totalLine = append(totalLine, scannerSRC.Text())
-			logs.Notice("APPEND -")
-
 		}
 	}
 
@@ -256,7 +252,6 @@ func UpdateFiles(service string)(err error){
 				if err != nil {	logs.Error("UpdateFiles Error copy files for master: "+err.Error()); return err}
 			}else{
 				if config.Masterfiles[w] == "app.conf"{
-					logs.Debug("app.conf owlhmaster")
 					err = UpdateTxtFile(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])
 					if err != nil {	logs.Error("UpdateTxtFile Error copy files for master: "+err.Error()); return err}
 				}else{
