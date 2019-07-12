@@ -227,11 +227,17 @@ func UpdateTxtFile(src string, dst string)(err error){
 
 	for scannerSRC.Scan() {
 		srcLine := strings.Split(scannerSRC.Text(), " ")
+		logs.Notice(srcLine[0])
+		logs.Warn(dstLine[srcLine[0]])
 		if _, ok := dstLine[srcLine[0]]; !ok {
 			totalLine = append(totalLine, scannerSRC.Text())
+			logs.Notice("APPEND -")
+
 		}
 	}
+
 	
+
 	for x := range totalLine {
 		if _, err = remoteWR.WriteString("\n"+totalLine[x]); err != nil {
 			logs.Error("Error writting to dst file: "+err.Error())
