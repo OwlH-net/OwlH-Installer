@@ -32,7 +32,8 @@
     "masterdb":[
         "group.db",
         "node.db",
-        "ruleset.db"
+        "ruleset.db",
+	"plugins.db"
 
     ],
     "nodedb":[
