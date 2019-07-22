@@ -13,9 +13,9 @@
     "action": "install",
     "repourl":"http://repo.owlh.net/current/",
     "target": [
-        "master",
-        "node",
-        "ui"
+        "owlhmaster",
+        "owlhnode",
+        "owlhui"
     ],
     "masterfiles":[
         "main.conf",
@@ -33,7 +33,7 @@
         "group.db",
         "node.db",
         "ruleset.db",
-	"plugins.db"
+	    "plugins.db"
 
     ],
     "nodedb":[

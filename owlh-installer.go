@@ -571,8 +571,6 @@ func ManageUI(){
 	var err error
 	service := "owlhui"
 
-	logs.Warn(config.Action)
-
 	switch config.Action {
 	case "install":
 		logs.Info("New Install for UI")
@@ -583,10 +581,6 @@ func ManageUI(){
 		err = GetNewSoftware(service)
 		if err != nil {	logs.Error("ManageUI Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageUI Copying files from download")
-
-								logs.Notice(config.Tmpfolder+service)
-								logs.Notice(config.Uipath)
-
 		err = FullCopyDir(config.Tmpfolder+service, config.Uipath)
 		if err != nil {	logs.Error("ManageUI FullCopyDir Error INSTALL Node: "+err.Error()); sessionLog["status"] = "Error copying full directory for UI: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageUI Launching service...")
@@ -642,27 +636,32 @@ func main() {
 	//Download current version
 	DownloadCurrentVersion()
 
-	logs.Info(config.Target)
 	for w := range config.Target {
 		switch config.Target[w] {
-		case "master":
+		case "owlhmaster":
 			if _, err = os.Stat(config.Masterbinpath); !os.IsNotExist(err) {
 				ManageMaster()
 			}else if config.Action == "install"{
 				ManageMaster()				
 			}
-		case "node":
+			err = RemoveDownloadedFiles(config.Target[w])
+			if err != nil {	logs.Error("Error removing "+config.Target[w]+" files: "+err.Error()); sessionLog["status"] = "Error removing "+config.Target[w]+" files: "+err.Error(); Logger(sessionLog)}
+		case "owlhnode":
 			if _, err = os.Stat(config.Nodebinpath); !os.IsNotExist(err) {
 				ManageNode()
 			}else if config.Action == "install"{
 				ManageNode()
 			}
-		case "ui":
+			err = RemoveDownloadedFiles(config.Target[w])
+			if err != nil {	logs.Error("Error removing "+config.Target[w]+" files: "+err.Error()); sessionLog["status"] = "Error removing "+config.Target[w]+" files: "+err.Error(); Logger(sessionLog)}
+		case "owlhui":
 			if _, err = os.Stat(config.Uipath); !os.IsNotExist(err) {				
 				ManageUI()
 			}else if config.Action == "install"{
 				ManageUI()
 			}
+			err = RemoveDownloadedFiles(config.Target[w])
+			if err != nil {	logs.Error("Error removing "+config.Target[w]+" files: "+err.Error()); sessionLog["status"] = "Error removing "+config.Target[w]+" files: "+err.Error(); Logger(sessionLog)}
 		default:
 			logs.Info("UNKNOWN Target at Main()")
 			sessionLog["status"] = "UNKNOWN Target at Main()"
