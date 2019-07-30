@@ -1,10 +1,10 @@
 {
     "versionfile":"current.version",
-    "masterbinpath":"/usr/local/owlh/src/owlhmaster/",
-    "masterconfpath":"/usr/local/owlh/src/owlhmaster/conf/",
+    "masterbinpath":"/root/workspace/src/owlhmaster/",
+    "masterconfpath":"/root/workspace/src/owlhmaster/conf/",
     "mastertarfile":"owlhmaster.tar.gz",
-    "nodebinpath":"/usr/local/owlh/src/owlhnode/",
-    "nodeconfpath":"/usr/local/owlh/src/owlhnode/conf/",
+    "nodebinpath":"/root/workspace/src/owlhnode/",
+    "nodeconfpath":"/root/workspace/src/owlhnode/conf/",
     "nodetarfile":"owlhnode.tar.gz",
     "uipath":"/var/www/owlh/",
     "uiconfpath":"/var/www/owlh/conf/",
@@ -13,9 +13,9 @@
     "action": "install",
     "repourl":"http://repo.owlh.net/current/",
     "target": [
-        "master",
-        "node",
-        "ui"
+        "owlhmaster",
+        "owlhnode",
+        "owlhui"
     ],
     "masterfiles":[
         "main.conf",
@@ -32,7 +32,8 @@
     "masterdb":[
         "group.db",
         "node.db",
-        "ruleset.db"
+        "ruleset.db",
+	    "plugins.db"
 
     ],
     "nodedb":[
