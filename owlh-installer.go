@@ -630,6 +630,7 @@ func main() {
 	sessionLog["date"] = currentTime
 	sessionLog["status"] = "--- Start Updater ---"
 	Logger(sessionLog)
+	
 
 	//Read Struct
 	config = ReadConfig()
