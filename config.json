@@ -33,6 +33,7 @@
         "master.db",
         "node.db",
         "ruleset.db"
+        
     ],
     "nodedb":[
         "plugins.db",
