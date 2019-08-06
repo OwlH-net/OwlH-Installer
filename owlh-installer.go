@@ -434,7 +434,7 @@ func ManageMaster(){
 		
 		logs.Info("ManageMaster Stopping the service")
 		err = StopService(service)
-		if err != nil {	logs.Error("ManageMaster Error INSTALL StopService: "+err.Error()); sessionLog["status"] = "Error stopping service for Master: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Warning("ManageMaster Error INSTALL StopService: "+err.Error()); sessionLog["status"] = "Error stopping service for Master: "+err.Error(); Logger(sessionLog); isError=true}
 		
 		logs.Info("ManageMaster Copying files from download")
 		err = CopyBinary(service)
@@ -456,10 +456,10 @@ func ManageMaster(){
 		
 		logs.Info("ManageMaster Launching service...")
 		err = StartService(service)
-		if err != nil {	logs.Error("ManageMaster Error INSTALL StartService: "+err.Error()); sessionLog["status"] = "Error launching service for Master: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Warning("ManageMaster Error INSTALL StartService: "+err.Error()); sessionLog["status"] = "Error launching service for Master: "+err.Error(); Logger(sessionLog); isError=true}
 				
 		logs.Info("ManageMaster Done!")
-		if isError {sessionLog["status"] = "ManageMaster installed with errors..."}else{sessionLog["status"] = "ManageMaster installed done!"}
+		if isError {sessionLog["status"] = "ManageMaster installed with errors/warnings..."}else{sessionLog["status"] = "ManageMaster installed done!"}
 		Logger(sessionLog)
 
 	case "update":
@@ -472,7 +472,7 @@ func ManageMaster(){
 			err = GetNewSoftware(service)
 			if err != nil {	logs.Error("ManageMaster Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for Master: "+err.Error(); Logger(sessionLog); isError=true}
 			err = StopService(service)
-			if err != nil {	logs.Error("ManageMaster Error UPDATING StopService: "+err.Error()); sessionLog["status"] = "Error stopping service for Master: "+err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Warning("ManageMaster Error UPDATING StopService: "+err.Error()); sessionLog["status"] = "Error stopping service for Master: "+err.Error(); Logger(sessionLog); isError=true}
 			err = CopyBinary(service)
 			if err != nil {	logs.Error("ManageMaster Error UPDATING CopyBinary: "+err.Error()); sessionLog["status"] = "Error copying binary for Master: "+err.Error(); Logger(sessionLog); isError=true}
 			err = UpdateFiles(service)
@@ -482,7 +482,7 @@ func ManageMaster(){
 			err = CopyFiles(config.Tmpfolder+"current.version", config.Masterconfpath+"current.version")
 			if err != nil {	logs.Error("ManageMaster Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for Master: "+err.Error(); Logger(sessionLog); isError=true}
 			err = StartService(service)
-			if err != nil {	logs.Error("ManageMaster Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error starting service for Master: "+err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Warning("ManageMaster Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error starting service for Master: "+err.Error(); Logger(sessionLog); isError=true}
 		}else{
 			logs.Info("Up to date")
 			if isError{sessionLog["status"] = "ManageMaster updated with errors..."}else{sessionLog["status"] = "ManageMaster updated done!"}
@@ -512,7 +512,7 @@ func ManageNode(){
 		if err != nil {	logs.Error("ManageNode Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Stopping the service")
 		err = StopService(service)
-		if err != nil {	logs.Error("ManageNode Error UPDATING StopService: "+err.Error()); sessionLog["status"] = "Error Stopping service for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Warning("ManageNode Error UPDATING StopService: "+err.Error()); sessionLog["status"] = "Error Stopping service for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Copying files from download")
 		err = CopyBinary(service)
 		if err != nil {	logs.Error("ManageNode Error INSTALL CopyBinary: "+err.Error()); sessionLog["status"] = "Error copying binary for Node: "+err.Error(); Logger(sessionLog); isError=true}
@@ -524,7 +524,7 @@ func ManageNode(){
 		if err != nil {	logs.Error("ManageNode Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error Copying files for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Launching service...")
 		err = StartService(service)
-		if err != nil {	logs.Error("ManageNode Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error launching service for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Warning("ManageNode Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error launching service for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Done!")
 		if isError {sessionLog["status"] = "ManageNode installed with errors..."}else{sessionLog["status"] = "ManageNode installed done!"}
 		Logger(sessionLog)
@@ -538,7 +538,7 @@ func ManageNode(){
 			err = GetNewSoftware(service)
 			if err != nil {	logs.Error("ManageNode Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error Getting new software for Node: "+err.Error(); Logger(sessionLog); isError=true}
 			err = StopService(service)
-			if err != nil {	logs.Error("ManageNode Error UPDATING StopService: "+err.Error()); sessionLog["status"] ="Error Stopping service for Node:"+ err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Warning("ManageNode Error UPDATING StopService: "+err.Error()); sessionLog["status"] ="Error Stopping service for Node:"+ err.Error(); Logger(sessionLog); isError=true}
 			err = CopyBinary(service)
 			if err != nil {	logs.Error("ManageNode Error UPDATING CopyBinary: "+err.Error()); sessionLog["status"] = "Error Copying Binary for Node: "+err.Error(); Logger(sessionLog); isError=true}
 			err = UpdateFiles(service)
@@ -548,7 +548,7 @@ func ManageNode(){
 			err = CopyFiles(config.Tmpfolder+"current.version", config.Nodeconfpath+"current.version")
 			if err != nil {	logs.Error("ManageNode BackupUiConf Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error Copying files for Node: "+err.Error(); Logger(sessionLog); isError=true}
 			err = StartService(service)
-			if err != nil {	logs.Error("ManageNode Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error launching service error for Node:"+err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Warning("ManageNode Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error launching service error for Node:"+err.Error(); Logger(sessionLog); isError=true}
 			if isError {sessionLog["status"] = "ManageNode updated with errors..."}else{sessionLog["status"] = "ManageNode updated done!"}
 			Logger(sessionLog)
 		}else{
@@ -630,6 +630,7 @@ func main() {
 	sessionLog["date"] = currentTime
 	sessionLog["status"] = "--- Start Updater ---"
 	Logger(sessionLog)
+	
 
 	//Read Struct
 	config = ReadConfig()
