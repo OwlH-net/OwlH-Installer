@@ -277,8 +277,6 @@ func UpdateFiles(service string)(err error){
 				}
 			}
 		}
-		err = CopyFiles(config.Tmpfolder+"current.version", config.Nodeconfpath+"current.version")
-		if err != nil {	logs.Error("UpdateFiles Error CopyFiles for assign current current.version file: "+err.Error()); return err}
 	default:
 		return errors.New("UNKNOWN service to download UpdateFiles")
 	}
