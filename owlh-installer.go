@@ -580,7 +580,7 @@ func ManageUI(){
 
 	var err error
 	service := "owlhui"
-		logs.Info("== UI ==")
+	logs.Info("== UI ==")
 	sessionLog["status"] ="== UI =="
 	Logger(sessionLog)
 
