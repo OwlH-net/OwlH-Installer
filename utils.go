@@ -203,7 +203,7 @@ func RemoveDownloadedFiles(service string)(err error){
 func RemoveCurrentVersion()(err error){
     err = os.RemoveAll(config.Tmpfolder+config.Versionfile)
 	if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing version file: "+err.Error()); return err }
-
+    return nil
 }
 
 
