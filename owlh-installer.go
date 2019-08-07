@@ -538,7 +538,7 @@ func ManageNode(){
 		if isError {sessionLog["status"] = "ManageNode installed with errors..."}else{sessionLog["status"] = "ManageNode installed done!"}
 		Logger(sessionLog)
 	case "update":				
-    	logs.Info("Node UPDATE"
+    	logs.Info("Node UPDATE")
 		sessionLog["status"] ="Update for Node"
 		Logger(sessionLog)
 		needsUpdate,_ := CheckVersion(config.Nodeconfpath)
