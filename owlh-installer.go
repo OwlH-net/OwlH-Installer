@@ -422,9 +422,13 @@ func ManageMaster(){
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 	sessionLog["date"] = currentTime
 	service := "owlhmaster"
+	logs.Info("== MASTER ==")
+	sessionLog["status"] ="== MASTER =="
+	Logger(sessionLog)
+	
 	switch config.Action {
 	case "install":
-		logs.Info("New Install for Master")
+		logs.Info("Master INSTALL")
 		sessionLog["status"] ="New Install for Master"
 		Logger(sessionLog)
 
@@ -463,8 +467,10 @@ func ManageMaster(){
 		Logger(sessionLog)
 
 	case "update":
-		sessionLog["status"] ="Update for Master"
+		sessionLog["status"] ="Master UPDATE"
 		Logger(sessionLog)
+		logs.Info("Master UPDATE")
+
 		needsUpdate,_ := CheckVersion(config.Masterconfpath)
 		// if err != nil {	logs.Error("ManageMaster Error UPDATING needsUpdate: "+err.Error()); sessionLog["status"] = "Error checking version for Master: "+err.Error(); Logger(sessionLog); isError=true}
 		if needsUpdate {
@@ -484,7 +490,7 @@ func ManageMaster(){
 			err = StartService(service)
 			if err != nil {	logs.Warning("ManageMaster Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error starting service for Master: "+err.Error(); Logger(sessionLog); isError=true}
 		}else{
-			logs.Info("Up to date")
+			logs.Info("Master is Up to date")
 			if isError{sessionLog["status"] = "ManageMaster updated with errors..."}else{sessionLog["status"] = "ManageMaster updated done!"}
 			Logger(sessionLog)
 		}
@@ -501,10 +507,13 @@ func ManageNode(){
 	sessionLog["date"] = currentTime
 	var err error
 	service := "owlhnode"
+	logs.Info("== NODE ==")
+	sessionLog["status"] ="== NODE =="
+	Logger(sessionLog)
 	switch config.Action {
 	case "install":
-		logs.Info("New Install for Node")
-		sessionLog["status"] ="New Install for Node"
+		logs.Info("Node INSTALL")
+		sessionLog["status"] ="Node INSTALL"
 		Logger(sessionLog)
 
 		logs.Info("Downloading New Software")
@@ -529,6 +538,7 @@ func ManageNode(){
 		if isError {sessionLog["status"] = "ManageNode installed with errors..."}else{sessionLog["status"] = "ManageNode installed done!"}
 		Logger(sessionLog)
 	case "update":				
+    	logs.Info("Node UPDATE"
 		sessionLog["status"] ="Update for Node"
 		Logger(sessionLog)
 		needsUpdate,_ := CheckVersion(config.Nodeconfpath)
@@ -552,7 +562,7 @@ func ManageNode(){
 			if isError {sessionLog["status"] = "ManageNode updated with errors..."}else{sessionLog["status"] = "ManageNode updated done!"}
 			Logger(sessionLog)
 		}else{
-			logs.Info("Up to date")
+			logs.Info("Node is Up to date")
 			sessionLog["status"] ="Node is up to date"
 			Logger(sessionLog)
 		}
@@ -570,6 +580,9 @@ func ManageUI(){
 
 	var err error
 	service := "owlhui"
+		logs.Info("== UI ==")
+	sessionLog["status"] ="== UI =="
+	Logger(sessionLog)
 
 	switch config.Action {
 	case "install":
@@ -592,8 +605,9 @@ func ManageUI(){
 		Logger(sessionLog)
 		logs.Info("ManageUI Done!")
 	case "update":
-		sessionLog["status"] ="New Update for UI"
+		sessionLog["status"] ="UI UPDATE"
 		Logger(sessionLog)	
+		logs.Info("UI UPDATE")
 
 		needsUpdate,_ := CheckVersion(config.Uiconfpath)
 		// if err != nil {	logs.Error("ManageUI Error UPDATING needsUpdate: "+err.Error()); sessionLog["status"] = "Error checking version for UI: "+err.Error(); Logger(sessionLog); isError=true}
@@ -612,7 +626,7 @@ func ManageUI(){
 			if isError {sessionLog["status"] = "ManageUI updated with errors..."}else{sessionLog["status"] = "ManageUI updated done!"}
 			Logger(sessionLog)
 		}else{
-			logs.Info("Up to date")
+			logs.Info("UI is Up to date")
 			sessionLog["status"] ="UI is up to date"
 			Logger(sessionLog)
 		}

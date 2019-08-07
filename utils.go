@@ -77,7 +77,7 @@ func CompareJSONFile(local map[string]interface{}, remote map[string]interface{}
 func CopyFiles(src string, dst string) (err error){
 	logs.Info("SRC: "+src+ " -- DST: "+dst)
 	_, err = exec.Command("bash","-c","cp -rp "+src+" "+dst).Output()
-	if err != nil {	logs.Error("CopyFiles Error copy: "+err.Error()); return err}
+	if err != nil {logs.Error("CopyFiles Error copy: "+err.Error()); return err}
 	return nil
 }
 
@@ -101,6 +101,7 @@ func ExtractTarGz(tarGzFile string, pathDownloads string)(err error){
 
 func DownloadCurrentVersion(){
 	err := DownloadFile(config.Tmpfolder+config.Versionfile, config.Repourl+config.Versionfile)
+	logs.Info("Downloading "+config.Repourl+config.Versionfile+" to "+config.Tmpfolder+config.Versionfile)
 	if err != nil {
 		logs.Error("Error Copying downloaded file: "+err.Error())
 	}
