@@ -372,6 +372,8 @@ func RestoreBackups()(err error){
 	for x := range config.Uifiles{
 		err = CopyFiles(config.Tmpfolder+config.Uifiles[x]+".bck", config.Uiconfpath+config.Uifiles[x])
 		if err != nil {	logs.Error("BackupUiConf Error CopyFiles for make a backup: "+err.Error()); return err}
+		err = os.RemoveAll(config.Tmpfolder+config.Uifiles[x]+".bck")
+    	if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing version file: "+err.Error()); return err }
 	}
 		
 	return nil
