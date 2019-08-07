@@ -684,6 +684,7 @@ func main() {
 		}
 	}
 	
+	RemoveCurrentVersion()
 	currentTime = time.Now().Format("2006-01-02 15:04:05")
 	sessionLog = make(map[string]string)
 	sessionLog["date"] = currentTime

@@ -181,9 +181,6 @@ func CheckVersion(confpath string) (status bool, err error){
 func RemoveDownloadedFiles(service string)(err error){
 	err = os.RemoveAll(config.Tmpfolder+service)
 	if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing "+service+" path: "+err.Error()); return err }
-	err = os.RemoveAll(config.Tmpfolder+config.Versionfile)
-	if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing version file "+service+": "+err.Error()); return err }
-
 	switch service {
 		case "owlhmaster":
 			err = os.RemoveAll(config.Tmpfolder+config.Mastertarfile)
@@ -202,6 +199,13 @@ func RemoveDownloadedFiles(service string)(err error){
 	}
 	return nil
 }
+
+func RemoveCurrentVersion()(err error){
+    err = os.RemoveAll(config.Tmpfolder+config.Versionfile)
+	if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing version file: "+err.Error()); return err }
+
+}
+
 
 func FullCopyFile(src, dst string) (err error) {
 	in, err := os.Open(src)
