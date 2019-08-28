@@ -24,6 +24,7 @@
     "nodefiles":[
         "main.conf",
         "stap-defaults.json",
+        "analyzer.json",
         "app.conf"
     ],
     "uifiles":[
@@ -38,6 +39,7 @@
     "nodedb":[
         "plugins.db",
         "servers.db",
-        "node.db"
+        "node.db",
+        "GeoLite2-City.mmdb"
     ]
 }
