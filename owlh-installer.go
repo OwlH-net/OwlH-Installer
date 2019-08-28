@@ -292,10 +292,10 @@ func UpdateDb(service string)(err error){
         }
     case "owlhnode":
         for w := range config.Nodedb{
-            if _, err := os.Stat(config.Masterconfpath+config.Masterdb[w]); os.IsNotExist(err) {                
+            if _, err := os.Stat(config.Nodeconfpath+config.Nodedb[w]); os.IsNotExist(err) {                
                 err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Nodedb[w], config.Nodeconfpath+config.Nodedb[w])    
                 if err != nil {    logs.Error("UpdateDb Error copy files for node: "+err.Error()); return err}
-            }else if strings.Contains(config.Masterdb[w], ".db"){
+            }else if strings.Contains(config.Nodedb[w], ".db"){
                 UpdateDBFile(config.Nodeconfpath+config.Nodedb[w], config.Tmpfolder+service+"/conf/"+config.Nodedb[w])
             }
         }
