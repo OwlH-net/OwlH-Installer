@@ -1,16 +1,16 @@
 {
     "versionfile":"current.version",
-    "masterbinpath":"/root/workspace/src/owlhmaster/",
-    "masterconfpath":"/root/workspace/src/owlhmaster/conf/",
+    "masterbinpath":"/usr/local/owlh/src/owlhmaster/",
+    "masterconfpath":"/usr/local/owlh/src/owlhmaster/conf/",
     "mastertarfile":"owlhmaster.tar.gz",
-    "nodebinpath":"/root/workspace/src/owlhnode/",
-    "nodeconfpath":"/root/workspace/src/owlhnode/conf/",
+    "nodebinpath":"/usr/local/owlh/src/owlhnode/",
+    "nodeconfpath":"/usr/local/owlh/src/owlhnode/conf/",
     "nodetarfile":"owlhnode.tar.gz",
     "uipath":"/var/www/owlh/",
     "uiconfpath":"/var/www/owlh/conf/",
     "uitarfile":"owlhui.tar.gz",
     "tmpfolder":"/tmp/",
-    "action": "install",
+    "action": "update",
     "repourl":"http://repo.owlh.net/current/",
     "target": [
         "owlhmaster",
@@ -24,20 +24,22 @@
     "nodefiles":[
         "main.conf",
         "stap-defaults.json",
+        "analyzer.json",
         "app.conf"
     ],
     "uifiles":[
         "ui.conf"
     ],
     "masterdb":[
-        "group.db",
+        "master.db",
         "node.db",
-        "ruleset.db",
-	    "plugins.db"
-
+        "ruleset.db"
+        
     ],
     "nodedb":[
         "plugins.db",
-        "servers.db"
+        "servers.db",
+        "node.db",
+        "GeoLite2-City.mmdb"
     ]
 }
