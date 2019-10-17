@@ -1,17 +1,17 @@
 {
     "versionfile":"current.version",
-    "masterbinpath":"/usr/local/owlh/src/owlhmaster0/",
-    "masterconfpath":"/usr/local/owlh/src/owlhmaster0/conf/",
+    "masterbinpath":"/usr/local/owlh/src/owlhmaster/",
+    "masterconfpath":"/usr/local/owlh/src/owlhmaster/conf/",
     "mastertarfile":"owlhmaster.tar.gz",
-    "nodebinpath":"/usr/local/owlh/src/owlhnode0/",
-    "nodeconfpath":"/usr/local/owlh/src/owlhnode0/conf/",
+    "nodebinpath":"/usr/local/owlh/src/owlhnode/",
+    "nodeconfpath":"/usr/local/owlh/src/owlhnode/conf/",
     "nodetarfile":"owlhnode.tar.gz",
-    "uipath":"/var/www/owlh0/",
-    "uiconfpath":"/var/www/owlh0/conf/",
+    "uipath":"/var/www/owlh/",
+    "uiconfpath":"/var/www/owlh/conf/",
     "uitarfile":"owlhui.tar.gz",
     "tmpfolder":"/tmp/",
     "action": "update",
-    "repourl":"http://repo.owlh.net/current/",
+    "repourl":"http://repo.owlh.net/current-centos/",
     "target": [
         "owlhmaster",
         "owlhnode",
@@ -19,10 +19,12 @@
     ],
     "masterfiles":[
         "main.conf",
+        "dispatcher-nodes.json",
         "app.conf"
     ],
     "nodefiles":[
         "main.conf",
+        "analyzer.json",
         "stap-defaults.json",
         "app.conf"
     ],
@@ -33,11 +35,11 @@
         "master.db",
         "node.db",
         "ruleset.db"
-        
     ],
     "nodedb":[
         "plugins.db",
         "servers.db",
+        "monitor.db",
         "node.db"
     ]
 }
