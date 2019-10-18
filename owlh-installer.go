@@ -21,7 +21,6 @@ type Config struct {
     Masterbinpath 		string `json:"masterbinpath"`
     Masterconfpath 		string `json:"masterconfpath"`
     Mastertarfile 		string `json:"mastertarfile"`
-    Mastertarfile 		string `json:"mastertarfile"`
     Masterprescripts 	string `json:"materprescripts"`
     Masterpostscripts 	string `json:"materpostscripts"`
     Nodebinpath 		string `json:"nodebinpath"`
@@ -72,10 +71,10 @@ func RunShScript(shpath string)(err error) {
     }
     outRemote,err := exec.Command("bash", shpath).Output()
     if err != nil {	
-        fmt.Println("RunShScript: "+shpath+" -> "+err.Error())
+        logs.Error("RunShScript: "+shpath+" -> "+err.Error())
         return err
     }
-    fmt.Println(string(outRemote))
+    logs.Info(string(outRemote))
     return nil
 }
 
