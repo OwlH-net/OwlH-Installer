@@ -435,6 +435,17 @@ func CopyServiceFiles(service string)(err error){
 	return nil
 }
 
+
+func FindFolderScripts(folder string)(err error){
+    if _, err := os.Stat(folder); !os.IsNotExist(err) {
+        logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
+        files := getFilesFromFolder(folder))
+        for file := range files {
+            RunShScript(file)
+        }
+    }
+}
+
 func RunPreScripts(service string){
     
     switch service {
