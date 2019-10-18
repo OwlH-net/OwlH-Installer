@@ -13,6 +13,8 @@
     "uipath":"/var/www/owlh/",
     "uiconfpath":"/var/www/owlh/conf/",
     "uitarfile":"owlhui.tar.gz",
+    "uiprescripts":"/tmp/owlhnodeprescripts/",
+    "uipostscripts":"/tmp/owlhnodepostscripts/",
     "tmpfolder":"/tmp/",
     "action": "update",
     "repourl":"http://repo.owlh.net/current-centos/",

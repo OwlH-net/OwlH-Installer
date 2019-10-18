@@ -31,6 +31,8 @@ type Config struct {
     Uipath 				string `json:"uipath"`
 	Uiconfpath			string `json:"uiconfpath"`
     Uitarfile 			string `json:"uitarfile"`
+    Uiprescripts 		string `json:"uiprescripts"`
+    Uipostscripts 		string `json:"uipostscripts"`
     Tmpfolder 			string `json:"tmpfolder"`
     Target 				[]string `json:"target"`
     Uifiles 			[]string `json:"uifiles"`
@@ -437,13 +439,13 @@ func RunPreScripts(service string){
     
     switch service {
     case "olwhnode":
-        log.Info("PRESCRIPTS - NODE ")
+        logs.Info("PRESCRIPTS - NODE -> "+ config.Nodeprescripts)
     case "olwhmaster":
-        log.Info("PRESCRIPTS - MASTER ")
+        logs.Info("PRESCRIPTS - MASTER -> "+ config.Nodepostscripts)
     case "olwhui":
-        log.Info("PRESCRIPTS - UI ")
+        logs.Info("PRESCRIPTS - UI -> " + config.Uiprescripts)
     default:
-        log.Info("PRESCRIPTS - Not a Service "+ service)
+        logs.Info("PRESCRIPTS - Not a Service "+ service)
     }
     return
 }
@@ -452,13 +454,13 @@ func RunPostScripts(service string){
     
     switch service {
     case "olwhnode":
-        log.Info("PRESCRIPTS - NODE ")
+        logs.Info("POSTSCRIPTS - NODE -> "+config.Nodepostscripts)
     case "olwhmaster":
-        log.Info("PRESCRIPTS - MASTER ")
+        logs.Info("POSTSCRIPTS - MASTER -> "+ config.Masterpostscripts)
     case "olwhui":
-        log.Info("PRESCRIPTS - UI ")
+        logs.Info("POSTSCRIPTS - UI -> "+ config.Uipostscripts)
     default:
-        log.Info("PRESCRIPTS - Not a Service "+ service)
+        logs.Info("POSTSCRIPTS - Not a Service "+ service)
     }
     return
 }
