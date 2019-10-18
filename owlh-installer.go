@@ -438,9 +438,10 @@ func CopyServiceFiles(service string)(err error){
 
 func FindFolderScripts(folder string)(err error){
     if _, err := os.Stat(folder); !os.IsNotExist(err) {
-        logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
+        logs.Info("Find script files on path -> "+folder)
         files := getFilesFromFolder(folder)
         for file := range files {
+            logs.Info("Script found -> " + files[file])
             RunShScript(files[file])
         }
     }
@@ -454,7 +455,7 @@ func RunPreScripts(service string){
         logs.Info("PRESCRIPTS - NODE -> "+ config.Nodeprescripts)
         if _, err := os.Stat(config.Nodeprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
-            logs.Info(getFilesFromFolder(config.Nodeprescripts))
+            FindFolderScripts(config.Nodeprescripts)
         }
     case "owlhmaster":
         logs.Info("PRESCRIPTS - MASTER -> "+ config.Masterprescripts)
