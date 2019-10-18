@@ -441,7 +441,7 @@ func FindFolderScripts(folder string)(err error){
         logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
         files := getFilesFromFolder(folder)
         for file := range files {
-            RunShScript(file)
+            RunShScript(files[file])
         }
     }
 }
