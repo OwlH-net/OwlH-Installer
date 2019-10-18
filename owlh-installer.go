@@ -445,12 +445,12 @@ func RunPreScripts(service string){
         }
     case "owlhmaster":
         logs.Info("PRESCRIPTS - MASTER -> "+ config.Masterprescripts)
-        if _, err = os.Stat(config.Masterprescripts); !os.IsNotExist(err) {
+        if _, err := os.Stat(config.Masterprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - MASTER -> Let's run -> ")
         }
     case "owlhui":
         logs.Info("PRESCRIPTS - UI -> " + config.Uiprescripts)
-        if _, err = os.Stat(config.Uiprescripts); !os.IsNotExist(err) {
+        if _, err := os.Stat(config.Uiprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - UI -> Let's run -> ")
         }
     default:
@@ -469,12 +469,12 @@ func RunPostScripts(service string){
         }
     case "owlhmaster":
         logs.Info("POSTSCRIPTS - MASTER -> "+ config.Masterpostscripts)
-        if _, err = os.Stat(config.Masterpostscripts); !os.IsNotExist(err) {
+        if _, err := os.Stat(config.Masterpostscripts); !os.IsNotExist(err) {
             logs.Info("POSTSCRIPTS - MASTER -> Let's run -> ")
         }
     case "owlhui":
         logs.Info("POSTSCRIPTS - UI -> "+ config.Uipostscripts)
-        if _, err = os.Stat(config.Uipostscripts); !os.IsNotExist(err) {
+        if _, err := os.Stat(config.Uipostscripts); !os.IsNotExist(err) {
             logs.Info("POSTSCRIPTS - UI -> Let's run -> ")
         }
     default:
