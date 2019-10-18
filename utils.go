@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"fmt"
 	"os/exec"
+	"errors"
 	// "archive/tar"
 	// "compress/gzip"
 )
@@ -111,6 +112,7 @@ func DownloadFile(filepath string, url string)(err error){
 	//Get the data	
     resp, err := http.Get(url)
     logs.Info("respuesta HTTP: --> ")
+    logs.Info(resp.StatusCode)
     logs.Info(resp)
 
     if err != nil {
@@ -118,6 +120,12 @@ func DownloadFile(filepath string, url string)(err error){
         return err
     }
     defer resp.Body.Close()
+    
+    if resp.StatusCode != 200 {
+        err = errors.New("Dowload file -> "+url+ " failed = err.code -> " + resp.StatusCode)
+        logs.Error(err.Error())
+        return err
+    }
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
