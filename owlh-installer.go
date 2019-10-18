@@ -564,7 +564,7 @@ func ManageNode(){
 		if needsUpdate {
 
 			err = GetNewSoftware(service)
-			if err != nil {	logs.Error("ManageNode Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error Getting new software for Node: "+err.Error(); Logger(sessionLog); isError=true, return}
+			if err != nil {	logs.Error("ManageNode Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error Getting new software for Node: "+err.Error(); Logger(sessionLog); isError=true; return}
 			err = StopService(service)
 			if err != nil {	logs.Warning("ManageNode Error UPDATING StopService: "+err.Error()); sessionLog["status"] ="Error Stopping service for Node:"+ err.Error(); Logger(sessionLog); isError=true}
 			err = CopyBinary(service)
@@ -632,7 +632,7 @@ func ManageUI(){
 		if needsUpdate {
 
 			err = GetNewSoftware(service)
-			if err != nil {	logs.Error("ManageUI Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error Getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true, return}
+			if err != nil {	logs.Error("ManageUI Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error Getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true; return}
 			err = BackupUiConf()			
 			if err != nil {	logs.Error("ManageUI Error UPDATING ui.conf backup: "+err.Error()); sessionLog["status"] = "Error backing up configuration file software for UI: "+err.Error(); Logger(sessionLog); isError=true}
 			err = FullCopyDir(config.Tmpfolder+service, config.Uipath)
