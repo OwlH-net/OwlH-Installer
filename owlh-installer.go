@@ -440,7 +440,7 @@ func RunPreScripts(service string){
     switch service {
     case "owlhnode":
         logs.Info("PRESCRIPTS - NODE -> "+ config.Nodeprescripts)
-        if _, err = os.Stat(config.Nodeprescripts); !os.IsNotExist(err) {
+        if _, err := os.Stat(config.Nodeprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
         }
     case "owlhmaster":
@@ -464,7 +464,7 @@ func RunPostScripts(service string){
     switch service {
     case "owlhnode":
         logs.Info("POSTSCRIPTS - NODE -> "+config.Nodepostscripts)
-        if _, err = os.Stat(config.Nodepostscripts); !os.IsNotExist(err) {
+        if _, err := os.Stat(config.Nodepostscripts); !os.IsNotExist(err) {
             logs.Info("POSTSCRIPTS - NODE -> Let's run -> ")
         }
     case "owlhmaster":
