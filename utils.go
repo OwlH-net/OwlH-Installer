@@ -290,7 +290,7 @@ func fileExists(filename string) bool {
 }
 
 func getFilesFromFolder (folder string)(files []string) {
-    err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+    err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
         files = append(files, path)
         return nil
     })
