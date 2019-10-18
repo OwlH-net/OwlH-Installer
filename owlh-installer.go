@@ -438,14 +438,23 @@ func CopyServiceFiles(service string)(err error){
 func RunPreScripts(service string){
     
     switch service {
-    case "olwhnode":
+    case "owlhnode":
         logs.Info("PRESCRIPTS - NODE -> "+ config.Nodeprescripts)
-    case "olwhmaster":
-        logs.Info("PRESCRIPTS - MASTER -> "+ config.Nodepostscripts)
-    case "olwhui":
+        if _, err = os.Stat(config.Nodeprescripts); !os.IsNotExist(err) {
+            logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
+        }
+    case "owlhmaster":
+        logs.Info("PRESCRIPTS - MASTER -> "+ config.Masterprescripts)
+        if _, err = os.Stat(config.Masterprescripts); !os.IsNotExist(err) {
+            logs.Info("PRESCRIPTS - MASTER -> Let's run -> ")
+        }
+    case "owlhui":
         logs.Info("PRESCRIPTS - UI -> " + config.Uiprescripts)
+        if _, err = os.Stat(config.Uiprescripts); !os.IsNotExist(err) {
+            logs.Info("PRESCRIPTS - UI -> Let's run -> ")
+        }
     default:
-        logs.Info("PRESCRIPTS - Not a Service "+ service)
+        logs.Info("PRESCRIPTS - Not a Service -> "+ service)
     }
     return
 }
@@ -453,14 +462,23 @@ func RunPreScripts(service string){
 func RunPostScripts(service string){
     
     switch service {
-    case "olwhnode":
+    case "owlhnode":
         logs.Info("POSTSCRIPTS - NODE -> "+config.Nodepostscripts)
-    case "olwhmaster":
+        if _, err = os.Stat(config.Nodepostscripts); !os.IsNotExist(err) {
+            logs.Info("POSTSCRIPTS - NODE -> Let's run -> ")
+        }
+    case "owlhmaster":
         logs.Info("POSTSCRIPTS - MASTER -> "+ config.Masterpostscripts)
-    case "olwhui":
+        if _, err = os.Stat(config.Masterpostscripts); !os.IsNotExist(err) {
+            logs.Info("POSTSCRIPTS - MASTER -> Let's run -> ")
+        }
+    case "owlhui":
         logs.Info("POSTSCRIPTS - UI -> "+ config.Uipostscripts)
+        if _, err = os.Stat(config.Uipostscripts); !os.IsNotExist(err) {
+            logs.Info("POSTSCRIPTS - UI -> Let's run -> ")
+        }
     default:
-        logs.Info("POSTSCRIPTS - Not a Service "+ service)
+        logs.Info("POSTSCRIPTS - Not a Service -> "+ service)
     }
     return
 }
