@@ -433,6 +433,36 @@ func CopyServiceFiles(service string)(err error){
 	return nil
 }
 
+func RunPreScripts(service string){
+    
+    switch service {
+    case "olwhnode":
+        log.Info("PRESCRIPTS - NODE ")
+    case "olwhmaster":
+        log.Info("PRESCRIPTS - MASTER ")
+    case "olwhui":
+        log.Info("PRESCRIPTS - UI ")
+    default:
+        log.Info("PRESCRIPTS - Not a Service "+ service)
+    }
+    return
+}
+
+func RunPostScripts(service string){
+    
+    switch service {
+    case "olwhnode":
+        log.Info("PRESCRIPTS - NODE ")
+    case "olwhmaster":
+        log.Info("PRESCRIPTS - MASTER ")
+    case "olwhui":
+        log.Info("PRESCRIPTS - UI ")
+    default:
+        log.Info("PRESCRIPTS - Not a Service "+ service)
+    }
+    return
+}
+
 func ManageMaster(){
 	var err error
 	isError := false
@@ -443,6 +473,8 @@ func ManageMaster(){
 	logs.Info("== MASTER ==")
 	sessionLog["status"] ="== MASTER =="
 	Logger(sessionLog)
+	
+	RunPreScripts(service)
 	
 	switch config.Action {
 	case "install":
@@ -517,6 +549,8 @@ func ManageMaster(){
 		sessionLog["status"] = "UNKNOWN Action ManageMaster"
 		Logger(sessionLog)
 	}
+	
+	RunPostScripts(service)
 }
 func ManageNode(){
 	isError := false
@@ -528,6 +562,9 @@ func ManageNode(){
 	logs.Info("== NODE ==")
 	sessionLog["status"] ="== NODE =="
 	Logger(sessionLog)
+	
+	RunPreScripts(service)
+
 	switch config.Action {
 	case "install":
 		logs.Info("Node INSTALL")
@@ -589,6 +626,9 @@ func ManageNode(){
 		sessionLog["status"] ="UNKNOWN Action ManageNode"
 		Logger(sessionLog)
 	}
+	
+	RunPostScripts(service)
+
 }
 func ManageUI(){
 	isError := false
@@ -601,6 +641,8 @@ func ManageUI(){
 	logs.Info("== UI ==")
 	sessionLog["status"] ="== UI =="
 	Logger(sessionLog)
+
+	RunPreScripts(service)
 
 	switch config.Action {
 	case "install":
@@ -652,6 +694,7 @@ func ManageUI(){
 		sessionLog["status"] ="UNKNOWN Action ManageUI"
 		Logger(sessionLog)
 	}
+	RunPostScripts(service)
 }
 
 func main() {
