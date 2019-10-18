@@ -4,7 +4,6 @@ import (
 	"os"
 	"bytes"
 	"io/ioutil"
-    "path/filepath"
 	"encoding/json"
 	"database/sql"
 	"os/exec"
