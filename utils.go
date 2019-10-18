@@ -111,9 +111,6 @@ func DownloadCurrentVersion(){
 func DownloadFile(filepath string, url string)(err error){
 	//Get the data	
     resp, err := http.Get(url)
-    logs.Info("respuesta HTTP: --> ")
-    logs.Info(resp.StatusCode)
-    logs.Info(resp)
 
     if err != nil {
 		logs.Error("Error downloading file: "+err.Error())
@@ -122,7 +119,7 @@ func DownloadFile(filepath string, url string)(err error){
     defer resp.Body.Close()
     
     if resp.StatusCode != 200 {
-        err = errors.New("Dowload file -> "+url+ " failed = err.code -> " + string(resp.StatusCode))
+        err = errors.New("Dowload file -> "+url+ " failed = err.code -> %s", string(resp.StatusCode))
         logs.Error(err.Error())
         return err
     }
