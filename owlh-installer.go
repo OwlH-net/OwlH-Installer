@@ -4,6 +4,7 @@ import (
 	"os"
 	"bytes"
 	"io/ioutil"
+    "path/filepath"
 	"encoding/json"
 	"database/sql"
 	"os/exec"
@@ -21,8 +22,8 @@ type Config struct {
     Masterbinpath 		string `json:"masterbinpath"`
     Masterconfpath 		string `json:"masterconfpath"`
     Mastertarfile 		string `json:"mastertarfile"`
-    Masterprescripts 	string `json:"materprescripts"`
-    Masterpostscripts 	string `json:"materpostscripts"`
+    Masterprescripts 	string `json:"masterprescripts"`
+    Masterpostscripts 	string `json:"masterpostscripts"`
     Nodebinpath 		string `json:"nodebinpath"`
     Nodeconfpath 		string `json:"nodeconfpath"`
     Nodetarfile 		string `json:"nodetarfile"`
@@ -442,6 +443,7 @@ func RunPreScripts(service string){
         logs.Info("PRESCRIPTS - NODE -> "+ config.Nodeprescripts)
         if _, err := os.Stat(config.Nodeprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
+            logs.Info(getFilesFromFolder(config.Nodeprescripts))
         }
     case "owlhmaster":
         logs.Info("PRESCRIPTS - MASTER -> "+ config.Masterprescripts)
