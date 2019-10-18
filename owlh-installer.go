@@ -536,22 +536,22 @@ func ManageNode(){
 
 		logs.Info("Downloading New Software")
 		err = GetNewSoftware(service)
-		if err != nil {	logs.Error("ManageNode Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for Node: "+err.Error(); Logger(sessionLog); isError=true; return}
+		if err != nil {	logs.Error("INSTALL ManageNode Error GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for Node: "+err.Error(); Logger(sessionLog); isError=true; return}
 		logs.Info("ManageNode Stopping the service")
 		err = StopService(service)
-		if err != nil {	logs.Warning("ManageNode Error UPDATING StopService: "+err.Error()); sessionLog["status"] = "Error Stopping service for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Warning("INSTALL ManageNode Error StopService: "+err.Error()); sessionLog["status"] = "Error Stopping service for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Copying files from download")
 		err = CopyBinary(service)
-		if err != nil {	logs.Error("ManageNode Error INSTALL CopyBinary: "+err.Error()); sessionLog["status"] = "Error copying binary for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("INSTALL ManageNode Error  CopyBinary: "+err.Error()); sessionLog["status"] = "Error copying binary for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		err = FullCopyDir(config.Tmpfolder+service+"/conf/", config.Nodeconfpath)
-		if err != nil {	logs.Error("FullCopyDir Error INSTALL Node: "+err.Error()); sessionLog["status"] = "Error copying full conf directory for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("INSTALL FullCopyDir Error Node: "+err.Error()); sessionLog["status"] = "Error copying full conf directory for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		err = FullCopyDir(config.Tmpfolder+service+"/defaults/", config.Nodeconfpath+"defaults/")
-		if err != nil {	logs.Error("FullCopyDir Error INSTALL Node: "+err.Error()); sessionLog["status"] = "Error copying full defaults directory for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("INSTALL FullCopyDir Error  Node: "+err.Error()); sessionLog["status"] = "Error copying full defaults directory for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		err = CopyFiles(config.Tmpfolder+"current.version", config.Nodeconfpath+"current.version")
-		if err != nil {	logs.Error("ManageNode Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error Copying files for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("INSTALL ManageNode Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error Copying files for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Launching service...")
 		err = StartService(service)
-		if err != nil {	logs.Warning("ManageNode Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error launching service for Node: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Warning("INSTALL ManageNode Error StartService: "+err.Error()); sessionLog["status"] = "Error launching service for Node: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageNode Done!")
 		if isError {sessionLog["status"] = "ManageNode installed with errors..."}else{sessionLog["status"] = "ManageNode installed done!"}
 		Logger(sessionLog)
@@ -610,16 +610,16 @@ func ManageUI(){
 
 		logs.Info("Downloading New Software")
 		err = GetNewSoftware(service)
-		if err != nil {	logs.Error("ManageUI Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true; return}
+		if err != nil {	logs.Error("INSTALL ManageUI Error GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true; return}
 		logs.Info("ManageUI Copying files from download")
 		err = FullCopyDir(config.Tmpfolder+service, config.Uipath)
-		if err != nil {	logs.Error("ManageUI FullCopyDir Error INSTALL Node: "+err.Error()); sessionLog["status"] = "Error copying full directory for UI: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("INSTALL ManageUI Error FullCopyDir UI: "+err.Error()); sessionLog["status"] = "Error copying full directory for UI: "+err.Error(); Logger(sessionLog); isError=true}
 		logs.Info("ManageUI Launching service...")
 		err = CopyFiles(config.Tmpfolder+"current.version", config.Uiconfpath+"current.version")
-		if err != nil {	logs.Error("ManageUI BackupUiConf Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for UI: "+err.Error(); Logger(sessionLog); isError=true}
+		if err != nil {	logs.Error("INSTALL ManageUI Error BackupUiConf CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for UI: "+err.Error(); Logger(sessionLog); isError=true}
 		err = StartService(service)
-		if err != nil {	logs.Error("ManageUI Error UPDATING StartService: "+err.Error()); sessionLog["status"] = "Error starting service for UI: "+err.Error(); Logger(sessionLog); isError=true}
-		if isError {sessionLog["status"] = "ManageUI updated with errors..."}else{sessionLog["status"] = "ManageUI updated done!"}
+		if err != nil {	logs.Error("INSTALL ManageUI Error StartService: "+err.Error()); sessionLog["status"] = "Error starting service for UI: "+err.Error(); Logger(sessionLog); isError=true}
+		if isError {sessionLog["status"] = "ManageUI installed with errors..."}else{sessionLog["status"] = "ManageUI installation done!"}
 		Logger(sessionLog)
 		logs.Info("ManageUI Done!")
 	case "update":
@@ -628,19 +628,18 @@ func ManageUI(){
 		logs.Info("UI UPDATE")
 
 		needsUpdate,_ := CheckVersion(config.Uiconfpath)
-		// if err != nil {	logs.Error("ManageUI Error UPDATING needsUpdate: "+err.Error()); sessionLog["status"] = "Error checking version for UI: "+err.Error(); Logger(sessionLog); isError=true}
 		if needsUpdate {
 
 			err = GetNewSoftware(service)
-			if err != nil {	logs.Error("ManageUI Error UPDATING GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error Getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true; return}
+			if err != nil {	logs.Error("UPDATE ManageUI Error GetNewSoftware: "+err.Error()); sessionLog["status"] = "Error Getting new software for UI: "+err.Error(); Logger(sessionLog); isError=true; return}
 			err = BackupUiConf()			
-			if err != nil {	logs.Error("ManageUI Error UPDATING ui.conf backup: "+err.Error()); sessionLog["status"] = "Error backing up configuration file software for UI: "+err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Error("UPDATE ManageUI Error ui.conf backup: "+err.Error()); sessionLog["status"] = "Error backing up configuration file software for UI: "+err.Error(); Logger(sessionLog); isError=true}
 			err = FullCopyDir(config.Tmpfolder+service, config.Uipath)
-			if err != nil {	logs.Error("ManageUI CopyAllUiFiles Error copying new elements to directory: "+err.Error()); sessionLog["status"] = "Error copying full directory for UI: "+err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Error("UPDATE ManageUI Error CopyAllUiFiles copying new elements to directory: "+err.Error()); sessionLog["status"] = "Error copying full directory for UI: "+err.Error(); Logger(sessionLog); isError=true}
 			err = CopyFiles(config.Tmpfolder+"current.version", config.Uiconfpath+"current.version")
-			if err != nil {	logs.Error("ManageUI BackupUiConf Error CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for UI: "+err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Error("UPDATE ManageUI Error BackupUiConf CopyFiles for assign current current.version file: "+err.Error()); sessionLog["status"] = "Error copying files for UI: "+err.Error(); Logger(sessionLog); isError=true}
 			err = RestoreBackups()			
-			if err != nil {	logs.Error("ManageUI Error UPDATING RestoreBackups: "+err.Error()); sessionLog["status"] = "Error restoring backups for UI: "+err.Error(); Logger(sessionLog); isError=true}
+			if err != nil {	logs.Error("UPDATE ManageUI Error RestoreBackups: "+err.Error()); sessionLog["status"] = "Error restoring backups for UI: "+err.Error(); Logger(sessionLog); isError=true}
 			if isError {sessionLog["status"] = "ManageUI updated with errors..."}else{sessionLog["status"] = "ManageUI updated done!"}
 			Logger(sessionLog)
 		}else{
