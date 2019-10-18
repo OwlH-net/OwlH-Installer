@@ -444,6 +444,7 @@ func FindFolderScripts(folder string)(err error){
             RunShScript(files[file])
         }
     }
+    return nil
 }
 
 func RunPreScripts(service string){
