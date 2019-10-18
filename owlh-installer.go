@@ -17,25 +17,30 @@ import (
 )
 
 type Config struct {
-    Versionfile		string `json:"versionfile"`
-    Masterbinpath 	string `json:"masterbinpath"`
-    Masterconfpath 	string `json:"masterconfpath"`
-    Mastertarfile 	string `json:"mastertarfile"`
-    Nodebinpath 	string `json:"nodebinpath"`
-    Nodeconfpath 	string `json:"nodeconfpath"`
-    Nodetarfile 	string `json:"nodetarfile"`
-    Uipath 			string `json:"uipath"`
-	Uiconfpath		string `json:"uiconfpath"`
-    Uitarfile 		string `json:"uitarfile"`
-    Tmpfolder 		string `json:"tmpfolder"`
-    Target 			[]string `json:"target"`
-    Uifiles 		[]string `json:"uifiles"`
-    Action 			string `json:"action"`
-	Repourl 		string `json:"repourl"`
-    Masterfiles 	[]string `json:"masterfiles"`
-    Nodefiles 		[]string `json:"nodefiles"`
-    Masterdb 		[]string `json:"masterdb"`
-    Nodedb 			[]string `json:"nodedb"`
+    Versionfile			string `json:"versionfile"`
+    Masterbinpath 		string `json:"masterbinpath"`
+    Masterconfpath 		string `json:"masterconfpath"`
+    Mastertarfile 		string `json:"mastertarfile"`
+    Mastertarfile 		string `json:"mastertarfile"`
+    Masterprescripts 	string `json:"materprescripts"`
+    Masterpostscripts 	string `json:"materpostscripts"`
+    Nodebinpath 		string `json:"nodebinpath"`
+    Nodeconfpath 		string `json:"nodeconfpath"`
+    Nodetarfile 		string `json:"nodetarfile"`
+    Nodeprescripts 		string `json:"nodeprescripts"`
+    Nodepostscripts 	string `json:"nodepostscripts"`
+    Uipath 				string `json:"uipath"`
+	Uiconfpath			string `json:"uiconfpath"`
+    Uitarfile 			string `json:"uitarfile"`
+    Tmpfolder 			string `json:"tmpfolder"`
+    Target 				[]string `json:"target"`
+    Uifiles 			[]string `json:"uifiles"`
+    Action 				string `json:"action"`
+	Repourl 			string `json:"repourl"`
+    Masterfiles 		[]string `json:"masterfiles"`
+    Nodefiles 			[]string `json:"nodefiles"`
+    Masterdb 			[]string `json:"masterdb"`
+    Nodedb 				[]string `json:"nodedb"`
 }
 
 var file = "log.json"
@@ -59,6 +64,19 @@ func ReadConfig() Config{
 	json.Unmarshal([]byte(b), &localConfig)
 
 	return localConfig
+}
+
+func RunShScript(shpath string)(err error) {
+    if !fileExists(shpath) {
+        return errors.New("File " + shpath +" does not exist")
+    }
+    outRemote,err := exec.Command("bash", shpath).Output()
+    if err != nil {	
+        fmt.Println("RunShScript: "+shpath+" -> "+err.Error())
+        return err
+    }
+    fmt.Println(string(outRemote))
+    return nil
 }
 
 func UpdateJsonFile(newFile string, currentFile string){
@@ -99,6 +117,7 @@ func UpdateJsonFile(newFile string, currentFile string){
 
 	return
 }
+
 
 func UpdateDBFile(currentDB string, newDB string){
 	outRemote,err := exec.Command("sqlite3", newDB, ".table").Output()
@@ -657,7 +676,7 @@ func main() {
 			if _, err = os.Stat(config.Masterbinpath); !os.IsNotExist(err) {
 				ManageMaster()
 			}else if config.Action == "install"{
-				ManageMaster()				
+				ManageMaster()
 			}
 			err = RemoveDownloadedFiles(config.Target[w])
 			if err != nil {	logs.Error("Error removing "+config.Target[w]+" files: "+err.Error()); sessionLog["status"] = "Error removing "+config.Target[w]+" files: "+err.Error(); Logger(sessionLog)}
