@@ -119,7 +119,7 @@ func DownloadFile(filepath string, url string)(err error){
     defer resp.Body.Close()
     
     if resp.StatusCode != 200 {
-        err = errors.New("Dowload file -> "+url+ " failed = err.code -> %s", string(resp.StatusCode))
+        err = errors.New("Dowload file -> "+url+ " failed = err.code -> %s", strconv.Itoa(resp.StatusCode))
         logs.Error(err.Error())
         return err
     }
