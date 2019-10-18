@@ -122,7 +122,7 @@ func DownloadFile(filepath string, url string)(err error){
     defer resp.Body.Close()
     
     if resp.StatusCode != 200 {
-        err = errors.New("Dowload file -> "+url+ " failed = err.code -> " + resp.StatusCode)
+        err = errors.New("Dowload file -> "+url+ " failed = err.code -> " + string(resp.StatusCode))
         logs.Error(err.Error())
         return err
     }
