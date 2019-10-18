@@ -67,11 +67,11 @@ func ReadConfig() Config{
 	return localConfig
 }
 
-func RunShScript(shpath string)(err error) {
+func RunShScript(shpath string, action string)(err error) {
     if !fileExists(shpath) {
         return errors.New("File " + shpath +" does not exist")
     }
-    outRemote,err := exec.Command("bash", shpath).Output()
+    outRemote,err := exec.Command("bash", shpath, action).Output()
     if err != nil {	
         logs.Error("RunShScript: "+shpath+" -> "+err.Error())
         return err
@@ -436,36 +436,38 @@ func CopyServiceFiles(service string)(err error){
 }
 
 
-func FindFolderScripts(folder string)(err error){
+func FindFolderScripts(folder string, action string)(err error){
     if _, err := os.Stat(folder); !os.IsNotExist(err) {
         logs.Info("Find script files on path -> "+folder)
         files := getFilesFromFolder(folder)
         for file := range files {
             logs.Info("Script found -> " + files[file])
-            RunShScript(files[file])
+            RunShScript(files[file], action)
         }
     }
     return nil
 }
 
-func RunPreScripts(service string){
+func RunPreScripts(service string, action string){
     
     switch service {
     case "owlhnode":
         logs.Info("PRESCRIPTS - NODE -> "+ config.Nodeprescripts)
         if _, err := os.Stat(config.Nodeprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - NODE -> Let's run -> ")
-            FindFolderScripts(config.Nodeprescripts)
+            FindFolderScripts(config.Nodeprescripts, action)
         }
     case "owlhmaster":
         logs.Info("PRESCRIPTS - MASTER -> "+ config.Masterprescripts)
         if _, err := os.Stat(config.Masterprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - MASTER -> Let's run -> ")
+            FindFolderScripts(config.Masterprescripts, action)
         }
     case "owlhui":
         logs.Info("PRESCRIPTS - UI -> " + config.Uiprescripts)
         if _, err := os.Stat(config.Uiprescripts); !os.IsNotExist(err) {
             logs.Info("PRESCRIPTS - UI -> Let's run -> ")
+            FindFolderScripts(config.Uiprescripts, action)
         }
     default:
         logs.Info("PRESCRIPTS - Not a Service -> "+ service)
@@ -473,23 +475,26 @@ func RunPreScripts(service string){
     return
 }
 
-func RunPostScripts(service string){
+func RunPostScripts(service string, action string){
     
     switch service {
     case "owlhnode":
         logs.Info("POSTSCRIPTS - NODE -> "+config.Nodepostscripts)
         if _, err := os.Stat(config.Nodepostscripts); !os.IsNotExist(err) {
             logs.Info("POSTSCRIPTS - NODE -> Let's run -> ")
+            FindFolderScripts(config.Nodepostscripts, action)
         }
     case "owlhmaster":
         logs.Info("POSTSCRIPTS - MASTER -> "+ config.Masterpostscripts)
         if _, err := os.Stat(config.Masterpostscripts); !os.IsNotExist(err) {
             logs.Info("POSTSCRIPTS - MASTER -> Let's run -> ")
+            FindFolderScripts(config.Masterpostscripts, action)
         }
     case "owlhui":
         logs.Info("POSTSCRIPTS - UI -> "+ config.Uipostscripts)
         if _, err := os.Stat(config.Uipostscripts); !os.IsNotExist(err) {
             logs.Info("POSTSCRIPTS - UI -> Let's run -> ")
+            FindFolderScripts(config.Uipostscripts, action)
         }
     default:
         logs.Info("POSTSCRIPTS - Not a Service -> "+ service)
@@ -508,7 +513,7 @@ func ManageMaster(){
 	sessionLog["status"] ="== MASTER =="
 	Logger(sessionLog)
 	
-	RunPreScripts(service)
+	RunPreScripts(service, config.Action)
 	
 	switch config.Action {
 	case "install":
@@ -584,7 +589,7 @@ func ManageMaster(){
 		Logger(sessionLog)
 	}
 	
-	RunPostScripts(service)
+	RunPostScripts(service, config.Action)
 }
 func ManageNode(){
 	isError := false
@@ -597,7 +602,7 @@ func ManageNode(){
 	sessionLog["status"] ="== NODE =="
 	Logger(sessionLog)
 	
-	RunPreScripts(service)
+	RunPreScripts(service, config.Action)
 
 	switch config.Action {
 	case "install":
@@ -661,7 +666,7 @@ func ManageNode(){
 		Logger(sessionLog)
 	}
 	
-	RunPostScripts(service)
+	RunPostScripts(service, config.Action)
 
 }
 func ManageUI(){
@@ -676,7 +681,7 @@ func ManageUI(){
 	sessionLog["status"] ="== UI =="
 	Logger(sessionLog)
 
-	RunPreScripts(service)
+	RunPreScripts(service, config.Action)
 
 	switch config.Action {
 	case "install":
@@ -728,7 +733,7 @@ func ManageUI(){
 		sessionLog["status"] ="UNKNOWN Action ManageUI"
 		Logger(sessionLog)
 	}
-	RunPostScripts(service)
+	RunPostScripts(service, config.Action)
 }
 
 func main() {
