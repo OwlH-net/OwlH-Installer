@@ -294,5 +294,6 @@ func getFilesFromFolder (folder string)(files []string) {
         files = append(files, path)
         return nil
     })
+    if err != nil {logs.Error(err.Error())}
     return files
 }
