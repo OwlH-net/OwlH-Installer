@@ -1,19 +1,19 @@
 package main
 
 import (
-	"os"
-	"bytes"
-	"io/ioutil"
-	"encoding/json"
-	"database/sql"
-	"os/exec"
-	"strings"	
-	"time"	
-	"bufio"	
-	"regexp"	
-	"errors"
-	"github.com/astaxie/beego/logs"
-	_ "github.com/mattn/go-sqlite3"
+    "os"
+    "bytes"
+    "io/ioutil"
+    "encoding/json"
+    "database/sql"
+    "os/exec"
+    "strings"    
+    "time"    
+    "bufio"    
+    "regexp"    
+    "errors"
+    "github.com/astaxie/beego/logs"
+    _ "github.com/mattn/go-sqlite3"
 )
 
 type Config struct {
@@ -50,21 +50,21 @@ var config Config
 
 
 func ReadConfig() Config{
-	configStruct, err := os.Open("config.json")
-	if err != nil {
-		logs.Error(err)
-	}
+    configStruct, err := os.Open("config.json")
+    if err != nil {
+        logs.Error(err)
+    }
 
-	defer configStruct.Close()
-	b, err := ioutil.ReadAll(configStruct)
-	if err != nil {
-		logs.Error(err)
-	}
+    defer configStruct.Close()
+    b, err := ioutil.ReadAll(configStruct)
+    if err != nil {
+        logs.Error(err)
+    }
 
-	var localConfig Config
-	json.Unmarshal([]byte(b), &localConfig)
+    var localConfig Config
+    json.Unmarshal([]byte(b), &localConfig)
 
-	return localConfig
+    return localConfig
 }
 
 func RunShScript(shpath string, action string)(err error) {
@@ -81,358 +81,353 @@ func RunShScript(shpath string, action string)(err error) {
 }
 
 func UpdateJsonFile(newFile string, currentFile string){
-	local, err := os.Open(currentFile)
-	if err != nil {
-		logs.Error(err)
-	}
+    local, err := os.Open(currentFile)
+    if err != nil {
+        logs.Error(err)
+    }
 
-	remote, err := os.Open(newFile)
-	if err != nil {
-		logs.Error(err)
-	}
+    remote, err := os.Open(newFile)
+    if err != nil {
+        logs.Error(err)
+    }
 
-	defer local.Close()
-	defer remote.Close()
+    defer local.Close()
+    defer remote.Close()
 
-	b, err := ioutil.ReadAll(local)
-	if err != nil {
-		logs.Error(err)
-	}
+    b, err := ioutil.ReadAll(local)
+    if err != nil {
+        logs.Error(err)
+    }
 
-	c, err := ioutil.ReadAll(remote)
-	if err != nil {
-		logs.Error(err)
-	}
+    c, err := ioutil.ReadAll(remote)
+    if err != nil {
+        logs.Error(err)
+    }
 
-	var localFile map[string]interface{}
-	var remoteFile map[string]interface{}
-	json.Unmarshal([]byte(b), &localFile)
-	json.Unmarshal([]byte(c), &remoteFile)
+    var localFile map[string]interface{}
+    var remoteFile map[string]interface{}
+    json.Unmarshal([]byte(b), &localFile)
+    json.Unmarshal([]byte(c), &remoteFile)
 
-	CompareJSONFile(localFile, remoteFile)
+    CompareJSONFile(localFile, remoteFile)
 
     LinesOutput, _ := json.Marshal(localFile)
-	var out bytes.Buffer
-	json.Indent(&out, LinesOutput, "","\t")
-	ioutil.WriteFile(currentFile, out.Bytes(), 0644)
+    var out bytes.Buffer
+    json.Indent(&out, LinesOutput, "","\t")
+    ioutil.WriteFile(currentFile, out.Bytes(), 0644)
 
-	return
+    return
 }
 
 
 func UpdateDBFile(currentDB string, newDB string){
-	outRemote,err := exec.Command("sqlite3", newDB, ".table").Output()
-	if err != nil {	logs.Error("UpdateDBFile outRemote: "+err.Error())}
-	outLocal,err := exec.Command("sqlite3", currentDB, ".table").Output()
-	if err != nil {	logs.Error("UpdateDBFile outLocal: "+err.Error())}
+    outRemote,err := exec.Command("sqlite3", newDB, ".table").Output()
+    if err != nil {    logs.Error("UpdateDBFile outRemote: "+err.Error())}
+    outLocal,err := exec.Command("sqlite3", currentDB, ".table").Output()
+    if err != nil {    logs.Error("UpdateDBFile outLocal: "+err.Error())}
 
-	re := regexp.MustCompile(`\s+`)
-	outputRemote := re.ReplaceAllString(string(outRemote), "\n")
-	outputLocal := re.ReplaceAllString(string(outLocal), "\n")
-	splitLocal := strings.Split(outputLocal, "\n")
-	splitRemote := strings.Split(outputRemote, "\n")
+    re := regexp.MustCompile(`\s+`)
+    outputRemote := re.ReplaceAllString(string(outRemote), "\n")
+    outputLocal := re.ReplaceAllString(string(outLocal), "\n")
+    splitLocal := strings.Split(outputLocal, "\n")
+    splitRemote := strings.Split(outputRemote, "\n")
 
-	var exists bool
-	for w := range splitRemote {
-		exists = false
-		for z := range splitLocal {
-			if splitRemote[w] == splitLocal[z] {
-				exists = true
-			}
-		}
-		if !exists{
-			createTable,err := exec.Command("sqlite3", newDB, ".schema "+splitRemote[w]).Output()
-			if err != nil {	logs.Error("UpdateDBFile Error Create table: "+err.Error())}
-			database, err := sql.Open("sqlite3", currentDB)
-			if err != nil {	logs.Error("UpdateDBFile Error Open table: "+err.Error())}
-			statement, err := database.Prepare(string(createTable))
-			if err != nil {	logs.Error("UpdateDBFile Error Prepare table: "+err.Error())}
-			defer database.Close()
-    		statement.Exec()
-		}
-	}
+    var exists bool
+    for w := range splitRemote {
+        exists = false
+        for z := range splitLocal {
+            if splitRemote[w] == splitLocal[z] {
+                exists = true
+            }
+        }
+        if !exists{
+            createTable,err := exec.Command("sqlite3", newDB, ".schema "+splitRemote[w]).Output()
+            if err != nil {    logs.Error("UpdateDBFile Error Create table: "+err.Error())}
+            database, err := sql.Open("sqlite3", currentDB)
+            if err != nil {    logs.Error("UpdateDBFile Error Open table: "+err.Error())}
+            statement, err := database.Prepare(string(createTable))
+            if err != nil {    logs.Error("UpdateDBFile Error Prepare table: "+err.Error())}
+            defer database.Close()
+            statement.Exec()
+        }
+    }
 }
 
 func Logger(data map[string]string){
-	f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		logs.Error(err)
-		return
-	}
-	defer f.Close()
+    f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        logs.Error(err)
+        return
+    }
+    defer f.Close()
 
-	LinesOutput, _ := json.Marshal(data)
+    LinesOutput, _ := json.Marshal(data)
 
-	_,err = f.WriteString(string(LinesOutput)+"\n")
-	if err != nil {
-		logs.Error(err)
-		return
-	}
+    _,err = f.WriteString(string(LinesOutput)+"\n")
+    if err != nil {
+        logs.Error(err)
+        return
+    }
 
-	return
+    return
 }
 
 func GetNewSoftware(service string)(err error){
-	var url string
-	var tarfile string
-	switch service{
-	case "owlhmaster":
-		tarfile = config.Mastertarfile
-		url = config.Repourl+tarfile
-	case "owlhnode":
-		tarfile = config.Nodetarfile
-		url = config.Repourl+tarfile
-	case "owlhui":
-		tarfile = config.Uitarfile
-		url = config.Repourl+tarfile
-	default:
-		return errors.New("UNKNOWN service to download GetNewSoftware")
-	}
-	
-	err = DownloadFile(config.Tmpfolder+tarfile, url)
-	if err != nil {	logs.Error("Error GetNewSoftware: "+err.Error()); return err }
-	err = ExtractTarGz(config.Tmpfolder+tarfile, config.Tmpfolder+service)
-	if err != nil {	logs.Error("Error GetNewSoftware: "+err.Error()); return err }
+    var url string
+    var tarfile string
+    switch service{
+    case "owlhmaster":
+        tarfile = config.Mastertarfile
+        url = config.Repourl+tarfile
+    case "owlhnode":
+        tarfile = config.Nodetarfile
+        url = config.Repourl+tarfile
+    case "owlhui":
+        tarfile = config.Uitarfile
+        url = config.Repourl+tarfile
+    default:
+        return errors.New("UNKNOWN service to download GetNewSoftware")
+    }
+    
+    err = DownloadFile(config.Tmpfolder+tarfile, url)
+    if err != nil {    logs.Error("Error GetNewSoftware: "+err.Error()); return err }
+    err = ExtractTarGz(config.Tmpfolder+tarfile, config.Tmpfolder+service)
+    if err != nil {    logs.Error("Error GetNewSoftware: "+err.Error()); return err }
 
-	return nil
+    return nil
 }
 
 func CopyBinary(service string)(err error){
-	binFileSrc := config.Tmpfolder+service+"/"+service
-	var binFileDst string
-	switch service{
-	case "owlhmaster":
-		binFileDst = config.Masterbinpath+service
-		err = os.MkdirAll(config.Masterbinpath, 0755)
-		if err != nil {	logs.Error("CopyBinary MkDirAll error creating folder for Master: "+err.Error()) }
-	case "owlhnode":
-		binFileDst = config.Nodebinpath+service
-		err = os.MkdirAll(config.Nodebinpath, 0755)
-		if err != nil {	logs.Error("CopyBinary MkDirAll error creating folder for Node: "+err.Error()) }
-	default:
-		return errors.New("UNKNOWN service to download CopyBinary")
-	}
+    binFileSrc := config.Tmpfolder+service+"/"+service
+    var binFileDst string
+    switch service{
+    case "owlhmaster":
+        binFileDst = config.Masterbinpath+service
+        err = os.MkdirAll(config.Masterbinpath, 0755)
+        if err != nil {    logs.Error("CopyBinary MkDirAll error creating folder for Master: "+err.Error()) }
+    case "owlhnode":
+        binFileDst = config.Nodebinpath+service
+        err = os.MkdirAll(config.Nodebinpath, 0755)
+        if err != nil {    logs.Error("CopyBinary MkDirAll error creating folder for Node: "+err.Error()) }
+    default:
+        return errors.New("UNKNOWN service to download CopyBinary")
+    }
 
-
-
-	err = CopyFiles(binFileSrc, binFileDst)	
-	if err != nil {	logs.Error("CopyBinary Error copy files: "+err.Error()); return err}
-	
-	return err
+    err = CopyFiles(binFileSrc, binFileDst)    
+    if err != nil {    logs.Error("CopyBinary Error copy files: "+err.Error()); return err}
+    
+    return err
 }
 
 func UpdateTxtFile(src string, dst string)(err error){
-	local, err := os.Open(src)
-	if err != nil {logs.Error(err); return err}
-	
-	remote, err := os.Open(dst)
-	if err != nil {logs.Error("Error opennign file for read UpdateTxtFile: "+err.Error()); return err}
-	remoteWR, err := os.OpenFile(dst, os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {logs.Error("Error opennign file for append UpdateTxtFile: "+err.Error()); return err}
+    local, err := os.Open(src)
+    if err != nil {logs.Error(err); return err}
+    
+    remote, err := os.Open(dst)
+    if err != nil {logs.Error("Error opennign file for read UpdateTxtFile: "+err.Error()); return err}
+    remoteWR, err := os.OpenFile(dst, os.O_APPEND|os.O_WRONLY, 0600)
+    if err != nil {logs.Error("Error opennign file for append UpdateTxtFile: "+err.Error()); return err}
 
-	defer local.Close()
-	defer remote.Close()
-	defer remoteWR.Close()
+    defer local.Close()
+    defer remote.Close()
+    defer remoteWR.Close()
 
-	scannerSRC := bufio.NewScanner(local)
-	scannerDST := bufio.NewScanner(remote)
-	
-	var totalLine []string
-	dstLine :=make(map[string]string)
+    scannerSRC := bufio.NewScanner(local)
+    scannerDST := bufio.NewScanner(remote)
+    
+    var totalLine []string
+    dstLine :=make(map[string]string)
 
-	for scannerDST.Scan() {
-		dLine := strings.Split(scannerDST.Text(), " ")
-		dstLine[dLine[0]] = scannerDST.Text()
-	}
+    for scannerDST.Scan() {
+        dLine := strings.Split(scannerDST.Text(), " ")
+        dstLine[dLine[0]] = scannerDST.Text()
+    }
 
-	for scannerSRC.Scan() {
-		srcLine := strings.Split(scannerSRC.Text(), " ")
-		if _, ok := dstLine[srcLine[0]]; !ok {
-			totalLine = append(totalLine, scannerSRC.Text())
-		}
-	}
+    for scannerSRC.Scan() {
+        srcLine := strings.Split(scannerSRC.Text(), " ")
+        if _, ok := dstLine[srcLine[0]]; !ok {
+            totalLine = append(totalLine, scannerSRC.Text())
+        }
+    }
 
-	
-
-	for x := range totalLine {
-		if _, err = remoteWR.WriteString("\n"+totalLine[x]); err != nil {
-			logs.Error("Error writting to dst file: "+err.Error())
-			return err
-		}
-	}
-	return err
+    for x := range totalLine {
+        if _, err = remoteWR.WriteString("\n"+totalLine[x]); err != nil {
+            logs.Error("Error writting to dst file: "+err.Error())
+            return err
+        }
+    }
+    return err
 }
 
 func UpdateFiles(service string)(err error){
-	switch service{
-	case "owlhmaster":
-		for w := range config.Masterfiles{
-			if _, err := os.Stat(config.Masterconfpath+config.Masterfiles[w]); os.IsNotExist(err) {				
-				err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])	
-				if err != nil {	logs.Error("UpdateFiles Error copy files for master: "+err.Error()); return err}
-			}else{
-				if config.Masterfiles[w] == "app.conf"{
-					err = UpdateTxtFile(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])
-					if err != nil {	logs.Error("UpdateTxtFile Error copy files for master: "+err.Error()); return err}
-				}else{
-					UpdateJsonFile(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])
-				}
-			}
-		}
-		err = CopyFiles(config.Tmpfolder+"current.version", config.Masterconfpath+"current.version")
-		if err != nil {	logs.Error("UpdateFiles Error CopyFiles for assign current current.version file: "+err.Error()); return err}
+    switch service{
+    case "owlhmaster":
+        for w := range config.Masterfiles{
+            if _, err := os.Stat(config.Masterconfpath+config.Masterfiles[w]); os.IsNotExist(err) {                
+                err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])    
+                if err != nil {    logs.Error("UpdateFiles Error copy files for master: "+err.Error()); return err}
+            }else{
+                if config.Masterfiles[w] == "app.conf"{
+                    err = UpdateTxtFile(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])
+                    if err != nil {    logs.Error("UpdateTxtFile Error copy files for master: "+err.Error()); return err}
+                }else{
+                    UpdateJsonFile(config.Tmpfolder+service+"/conf/"+config.Masterfiles[w], config.Masterconfpath+config.Masterfiles[w])
+                }
+            }
+        }
+        err = CopyFiles(config.Tmpfolder+"current.version", config.Masterconfpath+"current.version")
+        if err != nil {    logs.Error("UpdateFiles Error CopyFiles for assign current current.version file: "+err.Error()); return err}
 
-	case "owlhnode":
-		for w := range config.Nodefiles{
-			if _, err := os.Stat(config.Nodeconfpath+config.Nodefiles[w]); os.IsNotExist(err) {				
-				err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])	
-				if err != nil {	logs.Error("UpdateFiles Error copy files for Node: "+err.Error()); return err}
-			}else{
+    case "owlhnode":
+        for w := range config.Nodefiles{
+            if _, err := os.Stat(config.Nodeconfpath+config.Nodefiles[w]); os.IsNotExist(err) {                
+                err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])    
+                if err != nil {    logs.Error("UpdateFiles Error copy files for Node: "+err.Error()); return err}
+            }else{
+                if config.Nodefiles[w] == "app.conf"{
+                    err = UpdateTxtFile(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])
+                    if err != nil {    logs.Error("UpdateTxtFile Error copy files for Node: "+err.Error()); return err}
+                }else{
+                    UpdateJsonFile(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])
+                }
+            }
+        }
+    default:
+        return errors.New("UNKNOWN service to download UpdateFiles")
+    }
 
-				if config.Nodefiles[w] == "app.conf"{
-					err = UpdateTxtFile(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])
-					if err != nil {	logs.Error("UpdateTxtFile Error copy files for Node: "+err.Error()); return err}
-				}else{
-					UpdateJsonFile(config.Tmpfolder+service+"/conf/"+config.Nodefiles[w], config.Nodeconfpath+config.Nodefiles[w])
-				}
-			}
-		}
-	default:
-		return errors.New("UNKNOWN service to download UpdateFiles")
-	}
-
-	return nil
+    return nil
 }
 
 func UpdateDb(service string)(err error){
-	switch service{
-	case "owlhmaster":
-		for w := range config.Masterdb{
-			if _, err := os.Stat(config.Masterconfpath+config.Masterdb[w]); os.IsNotExist(err) {				
-				err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Masterdb[w], config.Masterconfpath+config.Masterdb[w])	
-				if err != nil {	logs.Error("UpdateDb Error copy files for master: "+err.Error()); return err}
-			}else{
-				UpdateDBFile(config.Masterconfpath+config.Masterdb[w], config.Tmpfolder+service+"/conf/"+config.Masterdb[w])
-			}
-		}
-	case "owlhnode":
-		for w := range config.Nodedb{
-			if _, err := os.Stat(config.Masterconfpath+config.Masterdb[w]); os.IsNotExist(err) {				
-				err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Nodedb[w], config.Nodeconfpath+config.Nodedb[w])	
-				if err != nil {	logs.Error("UpdateDb Error copy files for node: "+err.Error()); return err}
-			}else{
-				UpdateDBFile(config.Nodeconfpath+config.Nodedb[w], config.Tmpfolder+service+"/conf/"+config.Nodedb[w])
-			}
-		}
-	default:
-		return errors.New("UNKNOWN service to download UpdateDb")
-	}
+    switch service{
+    case "owlhmaster":
+        for w := range config.Masterdb{
+            if _, err := os.Stat(config.Masterconfpath+config.Masterdb[w]); os.IsNotExist(err) {                
+                err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Masterdb[w], config.Masterconfpath+config.Masterdb[w])    
+                if err != nil {    logs.Error("UpdateDb Error copy files for master: "+err.Error()); return err}
+            }else if strings.Contains(config.Masterdb[w], ".db"){
+                UpdateDBFile(config.Masterconfpath+config.Masterdb[w], config.Tmpfolder+service+"/conf/"+config.Masterdb[w])
+            }
+        }
+    case "owlhnode":
+        for w := range config.Nodedb{
+            if _, err := os.Stat(config.Nodeconfpath+config.Nodedb[w]); os.IsNotExist(err) {                
+                err = CopyFiles(config.Tmpfolder+service+"/conf/"+config.Nodedb[w], config.Nodeconfpath+config.Nodedb[w])    
+                if err != nil {    logs.Error("UpdateDb Error copy files for node: "+err.Error()); return err}
+            }else if strings.Contains(config.Nodedb[w], ".db"){
+                UpdateDBFile(config.Nodeconfpath+config.Nodedb[w], config.Tmpfolder+service+"/conf/"+config.Nodedb[w])
+            }
+        }
+    default:
+        return errors.New("UNKNOWN service to download UpdateDb")
+    }
 
-	return nil
+    return nil
 }
 
 func StartService(service string)(err error){
-	if service == "owlhui" {
-		if _, err := os.Stat("/etc/systemd/system/"); !os.IsNotExist(err) {
-			logs.Info(service+" systemd starting...")
-			_, err := exec.Command("bash","-c","systemctl restart httpd").Output()
-			return err
-		}else if _, err := os.Stat("/etc/init.d/"+service); !os.IsNotExist(err) {
-			logs.Info(service+" systemV starting...")
-			_, err := exec.Command("bash","-c","service httpd restart").Output()
-			return err
-		}
-		return err
-	}
-	if _, err := os.Stat("/etc/systemd/system/"+service+".service"); !os.IsNotExist(err) {
-		logs.Info(service+" systemd starting...")
-		_, err := exec.Command("bash","-c","systemctl start "+service).Output()
-		return err
-	}else if _, err := os.Stat("/etc/init.d/"+service); !os.IsNotExist(err) {
-		logs.Info(service+" systemV starting...")
-		_, err := exec.Command("bash","-c","service "+service+" start").Output()
-		return err
-	}
+    if service == "owlhui" {
+        if _, err := os.Stat("/etc/systemd/system/"); !os.IsNotExist(err) {
+            logs.Info(service+" systemd starting...")
+            _, err := exec.Command("bash","-c","systemctl restart httpd").Output()
+            return err
+        }else if _, err := os.Stat("/etc/init.d/"+service); !os.IsNotExist(err) {
+            logs.Info(service+" systemV starting...")
+            _, err := exec.Command("bash","-c","service httpd restart").Output()
+            return err
+        }
+        return err
+    }
+    if _, err := os.Stat("/etc/systemd/system/"+service+".service"); !os.IsNotExist(err) {
+        logs.Info(service+" systemd starting...")
+        _, err := exec.Command("bash","-c","systemctl start "+service).Output()
+        return err
+    }else if _, err := os.Stat("/etc/init.d/"+service); !os.IsNotExist(err) {
+        logs.Info(service+" systemV starting...")
+        _, err := exec.Command("bash","-c","service "+service+" start").Output()
+        return err
+    }
 
-	logs.Info(service+" alone")
-	
-	logs.Info("I can't start the service...")
-	// out, err := exec.Command("bash","-c","kill -9 $(pidof "+service+")").Output()
+    logs.Info(service+" alone")
+    
+    logs.Info("I can't start the service...")
+    // out, err := exec.Command("bash","-c","kill -9 $(pidof "+service+")").Output()
 
-	return nil
+    return nil
 }
 
 func StopService(service string) error{
-	if _, err := os.Stat("/etc/systemd/system/"+service+".service"); !os.IsNotExist(err) {
-		logs.Info(service+" systemd stopping...")
-		_, err := exec.Command("bash","-c","systemctl stop "+service).Output()
-		return err
-	}else if _, err := os.Stat("/etc/init.d/"+service); !os.IsNotExist(err) {
-		logs.Info(service+" systemV stopping...")
-		_, err := exec.Command("bash","-c","service "+service+" stop").Output()
-		return err
-	}
+    if _, err := os.Stat("/etc/systemd/system/"+service+".service"); !os.IsNotExist(err) {
+        logs.Info(service+" systemd stopping...")
+        _, err := exec.Command("bash","-c","systemctl stop "+service).Output()
+        return err
+    }else if _, err := os.Stat("/etc/init.d/"+service); !os.IsNotExist(err) {
+        logs.Info(service+" systemV stopping...")
+        _, err := exec.Command("bash","-c","service "+service+" stop").Output()
+        return err
+    }
 
-	logs.Info(service+" alone")
-	_, err := exec.Command("bash","-c","kill -9 $(pidof "+service+")").Output()
-	return err
+    logs.Info(service+" alone")
+    _, err := exec.Command("bash","-c","kill -9 $(pidof "+service+")").Output()
+    return err
 }
 
 func BackupUiConf()(err error){
-	for x := range config.Uifiles{
-		err = CopyFiles(config.Uiconfpath+config.Uifiles[x], config.Tmpfolder+config.Uifiles[x]+".bck")
-		if err != nil {	logs.Error("BackupUiConf Error CopyFiles for make a backup: "+err.Error()); return err}
-	}
-	return nil
+    for x := range config.Uifiles{
+        err = CopyFiles(config.Uiconfpath+config.Uifiles[x], config.Tmpfolder+config.Uifiles[x]+".bck")
+        if err != nil {    logs.Error("BackupUiConf Error CopyFiles for make a backup: "+err.Error()); return err}
+    }
+    return nil
 }
 
 func RestoreBackups()(err error){
-	for x := range config.Uifiles{
-		err = CopyFiles(config.Tmpfolder+config.Uifiles[x]+".bck", config.Uiconfpath+config.Uifiles[x])
-		if err != nil {	logs.Error("BackupUiConf Error CopyFiles for make a backup: "+err.Error()); return err}
-		err = os.RemoveAll(config.Tmpfolder+config.Uifiles[x]+".bck")
-    	if err != nil {	logs.Error("RemoveDownloadedFiles Error Removing version file: "+err.Error()); return err }
-	}
-		
-	return nil
+    for x := range config.Uifiles{
+        err = CopyFiles(config.Tmpfolder+config.Uifiles[x]+".bck", config.Uiconfpath+config.Uifiles[x])
+        if err != nil {    logs.Error("BackupUiConf Error CopyFiles for make a backup: "+err.Error()); return err}
+        err = os.RemoveAll(config.Tmpfolder+config.Uifiles[x]+".bck")
+        if err != nil {    logs.Error("RemoveDownloadedFiles Error Removing version file: "+err.Error()); return err }
+    }
+        
+    return nil
 }
 
 
 
 func CopyServiceFiles(service string)(err error){
-	stype := systemType()
-	stype = "systemV"
-	switch service {
-		case "owlhmaster":
-			if stype == "systemd"{
-				cmd := config.Masterbinpath+"defaults/services/systemd/owlhmaster.sh"
-				_, err = exec.Command("bash","-c",cmd).Output()
-				if err != nil {	logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
-			}
-			if stype == "systemV"{
-				cmd := config.Masterbinpath+"defaults/services/systemV/owlhmaster.sh"
-				_, err = exec.Command("bash","-c",cmd).Output()
-				if err != nil {	logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
-			}
-		case "owlhnode":
-			if stype == "systemd"{
-				cmd := config.Masterbinpath+"defaults/services/systemd/owlhnode.sh"
-				_, err = exec.Command("bash","-c",cmd).Output()
-				if err != nil {	logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
-			}
-			if stype == "systemV"{
-				cmd := config.Masterbinpath+"defaults/services/systemV/owlhnode.sh"
-				_, err = exec.Command("bash","-c",cmd).Output()
-				if err != nil {	logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
-			}
-		case "owlhui":
-			cmd := config.Masterbinpath+"defaults/services/httpd/owlhui.sh"
-			_, err = exec.Command("bash","-c",cmd).Output()
-			if err != nil {	logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
-		default:
-			logs.Error("No service")
-	}
-	return nil
+    stype := systemType()
+    stype = "systemV"
+    switch service {
+        case "owlhmaster":
+            if stype == "systemd"{
+                cmd := config.Masterbinpath+"defaults/services/systemd/owlhmaster.sh"
+                _, err = exec.Command("bash","-c",cmd).Output()
+                if err != nil {    logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
+            }
+            if stype == "systemV"{
+                cmd := config.Masterbinpath+"defaults/services/systemV/owlhmaster.sh"
+                _, err = exec.Command("bash","-c",cmd).Output()
+                if err != nil {    logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
+            }
+        case "owlhnode":
+            if stype == "systemd"{
+                cmd := config.Masterbinpath+"defaults/services/systemd/owlhnode.sh"
+                _, err = exec.Command("bash","-c",cmd).Output()
+                if err != nil {    logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
+            }
+            if stype == "systemV"{
+                cmd := config.Masterbinpath+"defaults/services/systemV/owlhnode.sh"
+                _, err = exec.Command("bash","-c",cmd).Output()
+                if err != nil {    logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
+            }
+        case "owlhui":
+            cmd := config.Masterbinpath+"defaults/services/httpd/owlhui.sh"
+            _, err = exec.Command("bash","-c",cmd).Output()
+            if err != nil {    logs.Error("CopyServiceFiles systemV ERROR: "+err.Error()); return err}
+        default:
+            logs.Error("No service")
+    }
+    return nil
 }
 
 
@@ -791,4 +786,5 @@ func main() {
 	Logger(sessionLog)
 
 	return
+
 }

@@ -32,6 +32,7 @@
         "main.conf",
         "analyzer.json",
         "stap-defaults.json",
+        "analyzer.json",
         "app.conf"
     ],
     "uifiles":[
@@ -47,5 +48,6 @@
         "servers.db",
         "monitor.db",
         "node.db"
+        "GeoLite2-City.mmdb"
     ]
 }
