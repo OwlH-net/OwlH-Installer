@@ -3,18 +3,21 @@ package main
 import (
    
     "github.com/astaxie/beego/logs"
-    "io"
-    "strconv"
-    "net/http"
-    "time"
-    "io/ioutil"
-    "strings"
-    "os"
-    "path/filepath"
-    "fmt"
-    "os/exec"
-    // "archive/tar"
-    // "compress/gzip"
+
+	"io"
+	"strconv"
+	"net/http"
+	"time"
+	"io/ioutil"
+	"strings"
+	"os"
+	"path/filepath"
+	"fmt"
+	"os/exec"
+	"errors"
+	// "archive/tar"
+	// "compress/gzip"
+
 )
 
 func CompareJSONFile(local map[string]interface{}, remote map[string]interface{}) (result map[string]interface{}){
@@ -110,26 +113,34 @@ func DownloadCurrentVersion(){
 func DownloadFile(filepath string, url string)(err error){
     //Get the data    
     resp, err := http.Get(url)
+
     if err != nil {
         logs.Error("Error downloading file: "+err.Error())
         return err
     }
     defer resp.Body.Close()
-    // Create the file
-    out, err := os.Create(filepath)
-    if err != nil {
-        logs.Error("Error creating file after download: "+err.Error())
+    
+    if resp.StatusCode != 200 {
+        err = errors.New("Dowload file -> "+url+ " failed = err.code -> "+ strconv.Itoa(resp.StatusCode))
+        logs.Error(err.Error())
         return err
     }
-    defer out.Close()
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		logs.Error("Error creating file after download: "+err.Error())
+		return err
+	}
+	defer out.Close()
 
-    // Write the body to file
-    _, err = io.Copy(out, resp.Body)
-    if err != nil {
-        logs.Error("Error Copying downloaded file: "+err.Error())
-        return err
-    }
-    return nil
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		logs.Error("Error Copying downloaded file: "+err.Error())
+		return err
+	}
+	return nil
+
 }
 
 func GetVersion(path string)(version string, err error){
@@ -266,9 +277,28 @@ func FullCopyDir(src string, dst string) (err error) {
 }
 
 func systemType()(stype string){
-    if _, err := os.Stat("/etc/systemd/system/"); !os.IsNotExist(err) {
-        return "systemd"
-    }else{
-        return "systemV"
+
+	if _, err := os.Stat("/etc/systemd/system/"); !os.IsNotExist(err) {
+		return "systemd"
+	}else{
+		return "systemV"
+	}
+}
+
+func fileExists(filename string) bool {
+    info, err := os.Stat(filename)
+    if os.IsNotExist(err) {
+        return false
     }
+    return !info.IsDir()
+}
+
+func getFilesFromFolder (folder string)(files []string) {
+    err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+        files = append(files, path)
+        return nil
+    })
+    if err != nil {logs.Error(err.Error())}
+    return files
+
 }
