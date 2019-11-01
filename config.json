@@ -48,6 +48,20 @@
         "servers.db",
         "monitor.db",
         "node.db"
+<<<<<<< Updated upstream
         "GeoLite2-City.mmdb"
+=======
+    ],
+    "suricata":"present",
+    "zeek":"present",
+    "stapinterfacemaster":"present",
+    "stapinterfacenode":"present",
+    "wazuhagent":"present",
+    "packets":[
+        "net-tools",
+        "lsof",
+        "tcpdump",
+        "tcpreplay"
+>>>>>>> Stashed changes
     ]
 }
