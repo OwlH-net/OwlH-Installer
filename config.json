@@ -46,8 +46,8 @@
         "plugins.db",
         "servers.db",
         "monitor.db",
-        "node.db",
-        "GeoLite2-City.mmdb"
+        "GeoLite2-City.mmdb",
+        "node.db"
     ],
     "suricata":"present",
     "zeek":"present",
