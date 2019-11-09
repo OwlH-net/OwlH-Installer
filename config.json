@@ -32,7 +32,6 @@
         "main.conf",
         "analyzer.json",
         "stap-defaults.json",
-        "analyzer.json",
         "app.conf"
     ],
     "uifiles":[
