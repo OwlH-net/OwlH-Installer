@@ -47,10 +47,8 @@
         "plugins.db",
         "servers.db",
         "monitor.db",
-        "node.db"
-<<<<<<< Updated upstream
+        "node.db",
         "GeoLite2-City.mmdb"
-=======
     ],
     "suricata":"present",
     "zeek":"present",
@@ -62,6 +60,5 @@
         "lsof",
         "tcpdump",
         "tcpreplay"
->>>>>>> Stashed changes
     ]
 }
