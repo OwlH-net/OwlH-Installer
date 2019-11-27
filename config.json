@@ -32,7 +32,6 @@
         "main.conf",
         "analyzer.json",
         "stap-defaults.json",
-        "analyzer.json",
         "app.conf"
     ],
     "uifiles":[
@@ -47,7 +46,18 @@
         "plugins.db",
         "servers.db",
         "monitor.db",
+        "GeoLite2-City.mmdb",
         "node.db"
-        "GeoLite2-City.mmdb"
+    ],
+    "suricata":"present",
+    "zeek":"present",
+    "stapinterfacemaster":"present",
+    "stapinterfacenode":"present",
+    "wazuhagent":"present",
+    "packets":[
+        "net-tools",
+        "lsof",
+        "tcpdump",
+        "tcpreplay"
     ]
 }
