@@ -26,11 +26,16 @@
     "masterfiles":[
         "main.conf",
         "dispatcher-nodes.json",
+        "defaultRulesets.json",
+        "suricata-keywords.json",
         "app.conf"
     ],
     "nodefiles":[
         "main.conf",
         "analyzer.json",
+        "postfilters.json",
+        "prefilters.json",
+        "tags.json",
         "stap-defaults.json",
         "app.conf"
     ],
