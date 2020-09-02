@@ -450,10 +450,10 @@ func RestoreBackups() (err error) {
 
 func CopyServiceFiles(service string) (err error) {
 
-    systemCtl = "systemctl"
-    daemonReload = "daemon-reload"
-    restart = "restart"
-    enable = "enable"
+    systemCtl := "systemctl"
+    daemonReload := "daemon-reload"
+    restart := "restart"
+    enable := "enable"
     switch service {
     case "owlhmaster":
         src := config.Masterbinpath + "conf/service/owlhmaster.service"
@@ -475,9 +475,8 @@ func CopyServiceFiles(service string) (err error) {
         logs.Warning("No service or UNKNOWN %s", service)
         return nil
     }
-    _, err := exec.Command("bash", systemctl, daemonReload).Output()
-    _, err = exec.Command("bash", systemctl, enable, service).Output()
-    _, err = exec.Command("bash", systemctl, restart, service).Output()
+    _, err := exec.Command("bash", systemCtl, daemonReload).Output()
+    _, err = exec.Command("bash", systemCtl, enable, service).Output()
 
     return nil
 }
