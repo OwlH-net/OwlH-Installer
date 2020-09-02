@@ -449,52 +449,36 @@ func RestoreBackups() (err error) {
 }
 
 func CopyServiceFiles(service string) (err error) {
-    stype := systemType()
+
+    systemCtl = "systemctl"
+    daemonReload = "daemon-reload"
+    restart = "restart"
+    enable = "enable"
     switch service {
     case "owlhmaster":
-        if stype == "systemd" {
-            cmd := config.Masterbinpath + "defaults/services/systemd/owlhmaster.sh"
-            _, err = exec.Command("bash", "-c", cmd).Output()
-            if err != nil {
-                logs.Error("CopyServiceFiles systemV ERROR: " + err.Error())
-                return err
-            }
-        }
-        if stype == "systemV" {
-            cmd := config.Masterbinpath + "defaults/services/systemV/owlhmaster.sh"
-            _, err = exec.Command("bash", "-c", cmd).Output()
-            if err != nil {
-                logs.Error("CopyServiceFiles systemV ERROR: " + err.Error())
-                return err
-            }
+        src := config.Masterbinpath + "conf/service/owlhmaster.service"
+        dst := "/etc/systemd/system/"
+        err = FullCopyFile(src, dst)
+        if err != nil {
+            logs.Warning("CopyServiceFiles systemd ERROR: " + err.Error())
+            return err
         }
     case "owlhnode":
-        if stype == "systemd" {
-            cmd := config.Masterbinpath + "defaults/services/systemd/owlhnode.sh"
-            _, err = exec.Command("bash", "-c", cmd).Output()
-            if err != nil {
-                logs.Error("CopyServiceFiles systemV ERROR: " + err.Error())
-                return err
-            }
-        }
-        if stype == "systemV" {
-            cmd := config.Masterbinpath + "defaults/services/systemV/owlhnode.sh"
-            _, err = exec.Command("bash", "-c", cmd).Output()
-            if err != nil {
-                logs.Error("CopyServiceFiles systemV ERROR: " + err.Error())
-                return err
-            }
-        }
-    case "owlhui":
-        cmd := config.Masterbinpath + "defaults/services/httpd/owlhui.sh"
-        _, err = exec.Command("bash", "-c", cmd).Output()
+        src := config.Nodebinpath + "conf/service/owlhmaster.service"
+        dst := "/etc/systemd/system/"
+        err = FullCopyFile(src, dst)
         if err != nil {
-            logs.Error("CopyServiceFiles systemV ERROR: " + err.Error())
+            logs.Warning("CopyServiceFiles systemd ERROR: " + err.Error())
             return err
         }
     default:
-        logs.Error("No service")
+        logs.Warning("No service or UNKNOWN %s", service)
+        return nil
     }
+    _, err := exec.Command("bash", systemctl, daemonReload).Output()
+    _, err = exec.Command("bash", systemctl, enable, service).Output()
+    _, err = exec.Command("bash", systemctl, restart, service).Output()
+
     return nil
 }
 
@@ -630,7 +614,7 @@ func ManageMaster() {
         logs.Info("ManageMaster Installing service...")
         err = CopyServiceFiles(service)
         if err != nil {
-            logs.Error("CopyServiceFiles Error INSTALL Master: " + err.Error())
+            logs.Warning("CopyServiceFiles Error INSTALL Master: " + err.Error())
             sessionLog["status"] = "Error copying service files for Master: " + err.Error()
             Logger(sessionLog)
             isError = true
