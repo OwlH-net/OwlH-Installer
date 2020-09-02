@@ -1010,11 +1010,14 @@ func ManageUI() {
 }
 
 func main() {
+
+    version := "0.16.0.20200902"
+    logs.Info("OwlH Installer - v%s", version)
     var err error
     currentTime := time.Now().Format("2006-01-02 15:04:05")
     sessionLog := make(map[string]string)
     sessionLog["date"] = currentTime
-    sessionLog["status"] = "--- Start Updater ---"
+    sessionLog["status"] = "--- Start Installer/Updater ---"
     Logger(sessionLog)
 
     //Read Struct
