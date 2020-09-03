@@ -452,7 +452,6 @@ func CopyServiceFiles(service string) (err error) {
 
     systemCtl := "systemctl"
     daemonReload := "daemon-reload"
-    restart := "restart"
     enable := "enable"
     switch service {
     case "owlhmaster":
