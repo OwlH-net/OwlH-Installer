@@ -475,7 +475,7 @@ func CopyServiceFiles(service string) (err error) {
         logs.Warning("No service or UNKNOWN %s", service)
         return nil
     }
-    _, err := exec.Command("bash", systemCtl, daemonReload).Output()
+    _, err = exec.Command("bash", systemCtl, daemonReload).Output()
     _, err = exec.Command("bash", systemCtl, enable, service).Output()
 
     return nil
