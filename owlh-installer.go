@@ -378,6 +378,8 @@ func UpdateDb(service string) (err error) {
 }
 
 func StartService(service string) (err error) {
+    systemCtl := "systemctl"
+    restart := "restart"
     if service == "owlhui" {
         if _, err := os.Stat("/etc/systemd/system/"); !os.IsNotExist(err) {
             logs.Info(service + " OwlH UI - systemd starting...")
@@ -391,23 +393,24 @@ func StartService(service string) (err error) {
     }
     if _, err := os.Stat("/etc/systemd/system/" + service + ".service"); !os.IsNotExist(err) {
         logs.Info(service + " systemd starting...")
-        _, err := exec.Command("bash", "-c", "systemctl start "+service).Output()
+        _, err := exec.Command(systemCtl, restart, service).Output()
         return err
     } else if _, err := os.Stat("/etc/init.d/" + service); !os.IsNotExist(err) {
         logs.Info(service + " systemV starting...")
         _, err := exec.Command("bash", "-c", "service "+service+" start").Output()
         return err
     }
-
     logs.Info(service + " -> no service installed (systemd or sysV file not found)")
     logs.Info("I can't start the service...")
     return nil
 }
 
 func StopService(service string) error {
+    systemCtl := "systemctl"
+    stop := "stop"
     if _, err := os.Stat("/etc/systemd/system/" + service + ".service"); !os.IsNotExist(err) {
         logs.Info(service + " systemd stopping...")
-        _, err := exec.Command("bash", "-c", "systemctl stop "+service).Output()
+        _, err := exec.Command(systemCtl, stop, service).Output()
         return err
     } else if _, err := os.Stat("/etc/init.d/" + service); !os.IsNotExist(err) {
         logs.Info(service + " systemV stopping...")
@@ -475,8 +478,14 @@ func CopyServiceFiles(service string) (err error) {
         logs.Warning("No service or UNKNOWN %s", service)
         return nil
     }
-    _, err = exec.Command("bash", systemCtl, daemonReload).Output()
-    _, err = exec.Command("bash", systemCtl, enable, service).Output()
+    _, err = exec.Command(systemCtl, daemonReload).Output()
+    if err != nil {
+        logs.Info("Reload Daemon configuration -> %s", err.Error())
+    }
+    _, err = exec.Command(systemCtl, enable, service).Output()
+    if err != nil {
+        logs.Info("Enable service %s -> %s", service, err.Error())
+    }
 
     return nil
 }
