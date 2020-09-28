@@ -199,12 +199,12 @@ func GetNewSoftware(service string) (err error) {
 
     err = DownloadFile(config.Tmpfolder+tarfile, url)
     if err != nil {
-        logs.Error("Error GetNewSoftware: " + err.Error())
+        logs.Error("Error GetNewSoftware downloading: " + err.Error())
         return err
     }
     err = ExtractTarGz(config.Tmpfolder+tarfile, config.Tmpfolder+service)
     if err != nil {
-        logs.Error("Error GetNewSoftware: " + err.Error())
+        logs.Error("Error GetNewSoftware extracting: " + err.Error())
         return err
     }
 
@@ -378,6 +378,8 @@ func UpdateDb(service string) (err error) {
 }
 
 func StartService(service string) (err error) {
+    systemCtl := "systemctl"
+    restart := "restart"
     if service == "owlhui" {
         if _, err := os.Stat("/etc/systemd/system/"); !os.IsNotExist(err) {
             logs.Info(service + " OwlH UI - systemd starting...")
@@ -391,23 +393,24 @@ func StartService(service string) (err error) {
     }
     if _, err := os.Stat("/etc/systemd/system/" + service + ".service"); !os.IsNotExist(err) {
         logs.Info(service + " systemd starting...")
-        _, err := exec.Command("bash", "-c", "systemctl start "+service).Output()
+        _, err := exec.Command(systemCtl, restart, service).Output()
         return err
     } else if _, err := os.Stat("/etc/init.d/" + service); !os.IsNotExist(err) {
         logs.Info(service + " systemV starting...")
         _, err := exec.Command("bash", "-c", "service "+service+" start").Output()
         return err
     }
-
     logs.Info(service + " -> no service installed (systemd or sysV file not found)")
     logs.Info("I can't start the service...")
     return nil
 }
 
 func StopService(service string) error {
+    systemCtl := "systemctl"
+    stop := "stop"
     if _, err := os.Stat("/etc/systemd/system/" + service + ".service"); !os.IsNotExist(err) {
         logs.Info(service + " systemd stopping...")
-        _, err := exec.Command("bash", "-c", "systemctl stop "+service).Output()
+        _, err := exec.Command(systemCtl, stop, service).Output()
         return err
     } else if _, err := os.Stat("/etc/init.d/" + service); !os.IsNotExist(err) {
         logs.Info(service + " systemV stopping...")
@@ -456,15 +459,15 @@ func CopyServiceFiles(service string) (err error) {
     switch service {
     case "owlhmaster":
         src := config.Masterbinpath + "conf/service/owlhmaster.service"
-        dst := "/etc/systemd/system/"
+        dst := "/etc/systemd/system/owlhmaster.service"
         err = FullCopyFile(src, dst)
         if err != nil {
             logs.Warning("CopyServiceFiles systemd ERROR: " + err.Error())
             return err
         }
     case "owlhnode":
-        src := config.Nodebinpath + "conf/service/owlhmaster.service"
-        dst := "/etc/systemd/system/"
+        src := config.Nodebinpath + "conf/service/owlhnode.service"
+        dst := "/etc/systemd/system/owlhnode.service"
         err = FullCopyFile(src, dst)
         if err != nil {
             logs.Warning("CopyServiceFiles systemd ERROR: " + err.Error())
@@ -474,8 +477,14 @@ func CopyServiceFiles(service string) (err error) {
         logs.Warning("No service or UNKNOWN %s", service)
         return nil
     }
-    _, err = exec.Command("bash", systemCtl, daemonReload).Output()
-    _, err = exec.Command("bash", systemCtl, enable, service).Output()
+    _, err = exec.Command(systemCtl, daemonReload).Output()
+    if err != nil {
+        logs.Info("Reload Daemon configuration -> %s", err.Error())
+    }
+    _, err = exec.Command(systemCtl, enable, service).Output()
+    if err != nil {
+        logs.Info("Enable service %s -> %s", service, err.Error())
+    }
 
     return nil
 }
