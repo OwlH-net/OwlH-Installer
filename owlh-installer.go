@@ -457,15 +457,15 @@ func CopyServiceFiles(service string) (err error) {
     switch service {
     case "owlhmaster":
         src := config.Masterbinpath + "conf/service/owlhmaster.service"
-        dst := "/etc/systemd/system/"
+        dst := "/etc/systemd/system/owlhmaster.service"
         err = FullCopyFile(src, dst)
         if err != nil {
             logs.Warning("CopyServiceFiles systemd ERROR: " + err.Error())
             return err
         }
     case "owlhnode":
-        src := config.Nodebinpath + "conf/service/owlhmaster.service"
-        dst := "/etc/systemd/system/"
+        src := config.Nodebinpath + "conf/service/owlhnode.service"
+        dst := "/etc/systemd/system/owlhnode.service"
         err = FullCopyFile(src, dst)
         if err != nil {
             logs.Warning("CopyServiceFiles systemd ERROR: " + err.Error())
