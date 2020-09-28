@@ -199,12 +199,12 @@ func GetNewSoftware(service string) (err error) {
 
     err = DownloadFile(config.Tmpfolder+tarfile, url)
     if err != nil {
-        logs.Error("Error GetNewSoftware: " + err.Error())
+        logs.Error("Error GetNewSoftware downloading: " + err.Error())
         return err
     }
     err = ExtractTarGz(config.Tmpfolder+tarfile, config.Tmpfolder+service)
     if err != nil {
-        logs.Error("Error GetNewSoftware: " + err.Error())
+        logs.Error("Error GetNewSoftware extracting: " + err.Error())
         return err
     }
 
@@ -452,7 +452,7 @@ func CopyServiceFiles(service string) (err error) {
 
     systemCtl := "systemctl"
     daemonReload := "daemon-reload"
-    restart := "restart"
+    //restart := "restart"
     enable := "enable"
     switch service {
     case "owlhmaster":
@@ -475,7 +475,7 @@ func CopyServiceFiles(service string) (err error) {
         logs.Warning("No service or UNKNOWN %s", service)
         return nil
     }
-    _, err := exec.Command("bash", systemCtl, daemonReload).Output()
+    _, err = exec.Command("bash", systemCtl, daemonReload).Output()
     _, err = exec.Command("bash", systemCtl, enable, service).Output()
 
     return nil
