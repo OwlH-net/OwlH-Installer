@@ -11,6 +11,7 @@ import (
     "os"
     "os/exec"
     "path/filepath"
+    "reflect"
     "strconv"
     "strings"
     "time"
@@ -46,8 +47,7 @@ func CompareJSONFile(local map[string]interface{}, remote map[string]interface{}
                 Logger(mapData)
 
             } else {
-
-                if vv != local[k] {
+                if v != local[k] {
                     mapData["date"] = currentTime
                     mapData["type"] = "file"
                     // mapData["localFile"] = fileName
@@ -74,7 +74,16 @@ func CompareJSONFile(local map[string]interface{}, remote map[string]interface{}
             }
 
         default:
-
+            if local[k] == nil {
+                mapData["date"] = currentTime
+                mapData["type"] = "file"
+                // mapData["localFile"] = fileName
+                mapData["param"] = k
+                mapData["currentValue"] = "nil"
+                mapData["newValue"] = fmt.Sprintf("%s", remote[k])
+                local[k] = remote[k]
+                Logger(mapData)
+            }
         }
     }
 
