@@ -11,12 +11,9 @@ import (
     "os"
     "os/exec"
     "path/filepath"
-    "reflect"
     "strconv"
     "strings"
     "time"
-    // "archive/tar"
-    // "compress/gzip"
 )
 
 func CompareJSONFile(local map[string]interface{}, remote map[string]interface{}) (result map[string]interface{}) {
