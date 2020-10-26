@@ -71,6 +71,7 @@ func CompareJSONFile(local map[string]interface{}, remote map[string]interface{}
             }
 
         default:
+            vv = vv
             if local[k] == nil {
                 mapData["date"] = currentTime
                 mapData["type"] = "file"
