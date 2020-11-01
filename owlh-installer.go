@@ -1019,7 +1019,7 @@ func ManageUI() {
 
 func main() {
 
-    version := "0.17.0.20201023"
+    version := "0.17.2.20201031"
     logs.Info("OwlH Installer - v%s", version)
     var err error
     currentTime := time.Now().Format("2006-01-02 15:04:05")
