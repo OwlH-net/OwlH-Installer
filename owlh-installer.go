@@ -6,6 +6,7 @@ import (
     "database/sql"
     "encoding/json"
     "errors"
+    "flag"
     "github.com/astaxie/beego/logs"
     _ "github.com/mattn/go-sqlite3"
     "io/ioutil"
@@ -1017,9 +1018,59 @@ func ManageUI() {
     RunPostScripts(service, config.Action)
 }
 
+func checkFlag(val, action string, defaults []string) (err error) {
+    return nil
+}
+
 func main() {
 
-    version := "0.17.0.20201023"
+    version := "0.18.0.20201110"
+
+    local := flag.Bool("local", false, "use local tar files")
+    dist := flag.String("dist", "config", "centos|debian|arm empty will use config.json")
+    tversion := flag.String("version", "latest", "x.x.x target version, latest if empty")
+    action := flag.String("action", "config", "install|update, empty will use config.json")
+    force := flag.Bool("force", false, "force update action, with or without current.version")
+    tnode := flag.Bool("node", false, "target Node")
+    tmaster := flag.Bool("master", false, "target Master")
+    tui := flag.Bool("ui", false, "target UI")
+    tinstaller := flag.Bool("installer", false, "target Installer")
+
+    flag.Parse()
+
+    ferr := checkFlag(*dist, "value", []string{"centos", "debian", "arm"})
+    if ferr != nil {
+        logs.Debug("dist should be one of centos debian or arm values, provided -> %s", *dist)
+        flag.PrintDefaults()
+        return
+    }
+    ferr = checkFlag(*tversion, "match", []string{"x.x.x"})
+    if ferr != nil {
+        logs.Debug("version should match x.x.x format with x int, provided -> %s", *dist)
+        flag.PrintDefaults()
+        return
+    }
+    ferr = checkFlag(*action, "value", []string{"install", "update"})
+    if ferr != nil {
+        logs.Debug("dist should be one of install or update values, provided -> %s", *dist)
+        flag.PrintDefaults()
+        return
+    }
+
+    logs.Debug(*local)
+    logs.Debug(*dist)
+    logs.Debug(*tversion)
+    logs.Debug(*action)
+    logs.Debug(*force)
+    logs.Debug(*tnode)
+    logs.Debug(*tmaster)
+    logs.Debug(*tui)
+    logs.Debug(*tinstaller)
+
+    flag.PrintDefaults()
+
+    return
+
     logs.Info("OwlH Installer - v%s", version)
     var err error
     currentTime := time.Now().Format("2006-01-02 15:04:05")
